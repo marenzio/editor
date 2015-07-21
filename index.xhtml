@@ -323,6 +323,24 @@ context-menus:
             drag_id.length = 0;
         }
     });
+    
+	function upload_file() {
+		
+		$('#submit-btn').popover('hide');
+		var f = $("#mei_files").prop('files')[0];
+		var reader = new FileReader();
+
+		// Closure to capture the file information.
+		reader.onload = (function(theFile) {
+			return function(e) {
+                $('.row-offcanvas').toggleClass('active');
+				load_data(e.target.result);
+			};
+		})(f);
+
+		// Read in the image file as a data URL.
+		reader.readAsText(f);
+	};
 
 //]]>
 </script>
