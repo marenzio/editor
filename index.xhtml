@@ -68,6 +68,12 @@ context-menus:
         }
 		svg = vrvToolkit.renderPage(page, "");
 		$("#svg_output").html(svg);
+
+		// MM - uncomment to load into xml_output
+        var mei = vrvToolkit.getMEI( page );
+        $("#xml_output").text(mei);
+
+
 		adjust_page_height();
 	};
     
@@ -317,15 +323,16 @@ context-menus:
     </div>
 </div>
 
-<div id="parent_panel" >
-	<div id="xml_panel" style="background-color: #fff;">
-    	<pre class="prettyprint" id="xml_output"  style="overflow: auto; width: auto; word-wrap: normal;">
-    	</pre>
+
+<div id="parent_panel">
+	<div id="xml_panel" >
+		<div id="editor" style="height: 500px; width: 500px">some text</div>
 	</div>
 	<div id="svg_panel" style="background-color: #fff;">
-		<div id="svg_output" style="overflow: hidden; z-index: 1; position:absolute;" />
+		<div id="svg_output" />
 	</div>
 </div>
+
 
 <!-- sidebar -->
 <div class="sidebar-offcanvas" id="sidebar" role="navigation">
@@ -389,6 +396,9 @@ context-menus:
     </ul>
 </div>
 
+
+
+
 <script type="text/javascript">
 //<![CDATA[
 	$( document ).ready(function() {
@@ -422,6 +432,8 @@ context-menus:
             apply_zoom();
         });
         
+	    var editor = ace.edit("editor");
+
         $('#svg_output').on('click', ".note", function(e) {
 //            var t = e.target, tx = parseInt(t.getAttribute("x"), 10), ty = parseInt(t.getAttribute("y"), 10);
 //            console.log(t);

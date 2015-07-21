@@ -152,9 +152,12 @@ td.keyboard {
 }
 
 #xml_panel {
+	float: left;
 	width: 50%;
 }
 
 #svg_panel {
+	float: right;
 	width: 50%;
+	overflow-x: scroll;
 }
