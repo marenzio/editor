@@ -63,9 +63,6 @@ context-menus:
 	}
 
 	function load_page() {
-        if (show_xml) {
-            $('#show_notation').trigger("click");
-        }
 		svg = vrvToolkit.renderPage(page, "");
 		$("#svg_output").html(svg);
 
@@ -126,27 +123,6 @@ context-menus:
 		MIDI.noteOff(0, note, 0.5);
     };
     
-    function toggle_XML( show ) {
-    	return;
-        if (show_xml == show) {
-            return;
-        }
-        show_xml = show;
-        if (show_xml) { 
-        	var mei = vrvToolkit.getMEI( page );
-            $("#xml_output").text(mei);
-            //prettyPrint is just too slow...
-            //$("#xml_output").removeClass("prettyprinted");
-            //prettyPrint();
-            $("#svg_panel").hide();
-            $("#xml_panel").show();
-        }
-        else {
-            $("#svg_panel").show();
-            $("#xml_panel").hide();
-        }
-    };
-
 	function next_page() {
 		if (page >= vrvToolkit.getPageCount()) {
 			return;
@@ -284,14 +260,6 @@ context-menus:
             <!--<li class="divider"></li>
             <li><a href="#">Separated link</a></li>-->
         </ul>
-    </div>
-    <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-default btn-sm active">
-            <input id="show_notation" type="radio" name="show" value="show_notation" checked="true"/>&#x266b;
-        </label>
-        <label class="btn btn-default btn-sm">
-            <input type="radio" name="show" value="show_xml"/>XML
-        </label>
     </div>
     <div class="btn-group" role="group">
 			<button onclick="zoom_out()" class="btn btn-sm btn-default" type="button">
@@ -440,15 +408,6 @@ context-menus:
 
 
         })
-
-        $('input[type=radio][name=show]').change(function() {
-             if (this.value == 'show_notation') {
-                 toggle_XML( false );
-             }
-            else {
-                toggle_XML( true );
-             }
-        });
         
         $('input[type=checkbox][name=mute]').change(function() {
             mute = !mute;
