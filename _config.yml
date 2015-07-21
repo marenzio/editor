@@ -1,0 +1,6 @@
+name: Editor for MODE
+markdown: redcarpet
+pygments: true
+baseurl: "http://www.marenzio.org/editor"
+
+exclude: []
