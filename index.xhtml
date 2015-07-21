@@ -59,21 +59,16 @@ context-menus:
 		set_options();
 		vrvToolkit.loadData(data);
 		page = 1;
-		load_page( true );
+		load_page();
 	}
 
-	function load_page( init_overlay ) {
+	function load_page() {
         if (show_xml) {
             $('#show_notation').trigger("click");
         }
 		svg = vrvToolkit.renderPage(page, "");
 		$("#svg_output").html(svg);
-        //d3.select("#svg_output").select("svg").selectAll(".note").on("mousedown", select);
-        //d3.select("#svg_output").selectAll("*").style("opacity", "0.0");
 		adjust_page_height();
-        if ( init_overlay ) {
-            create_overlay( 0 );   
-        }
 	};
     
     function reload_page( id ) {
@@ -86,31 +81,8 @@ context-menus:
         if (elementPage != page) {
             page = elementPage;
         }
-        load_page( true );
+        load_page();
     }
-    
-    function reset_overlay( ) {
-        $("#svg_overlay").html("");
-    };
-    
-    function create_overlay( id ) {
-        
-        $("#svg_overlay").html( $("#svg_output").html() );
-        overlay_svg = d3.select("#svg_overlay").select("svg");
-        /*
-        var element = overlay_svg.select("#" + id );
-        element.selectAll("*:not(use)").remove()
-        var str = new XMLSerializer().serializeToString( element.node() );
-        d3.select("#svg_overlay").select(".page-margin").selectAll("*").remove();
-        $("#svg_overlay .page-margin").html(str);
-        */
-        d3.select("#svg_overlay").selectAll("g, path").style("stroke-opacity", "0.0").style("fill-opacity", "0.0");
-        d3.select("#svg_overlay").selectAll("text").remove();
-        d3.select("#svg_overlay").select("svg").selectAll(".note").call(drag_overlay);
-        d3.select("#svg_overlay").select("defs").append("filter").attr("id", "selector");
-        //    .append("feMorphology").attr("operator", "dilate").attr("in", "SourceGraphic").attr("radius", 3);
-        //.append("feGaussianBlur").attr("stdDeviation", 5);
-    };
     
     function play_note( id, update ) {
         if ( mute ) {
@@ -149,6 +121,7 @@ context-menus:
     };
     
     function toggle_XML( show ) {
+    	return;
         if (show_xml == show) {
             return;
         }
@@ -173,7 +146,7 @@ context-menus:
 			return;
 		}
 		page = page + 1;
-		load_page( true );
+		load_page();
 	};
 
 	function prev_page() {
@@ -181,25 +154,24 @@ context-menus:
 			return;
 		}
 		page = page - 1;
-		load_page( true );
+		load_page();
 	};
 
 	function first_page() {
 		page = 1;
-		load_page( true );
+		load_page();
 	};
 	
 	function last_page() {
 		page = vrvToolkit.getPageCount();
-		load_page( true );
+		load_page();
 	};
 
 	function apply_zoom() {
 		set_options();
-        reset_overlay();
 		vrvToolkit.redoLayout();
 		page = 1;
-		load_page( true );
+		load_page();
 	}
 
 	function zoom_out() {
@@ -230,23 +202,14 @@ context-menus:
 	}
     
     function highlight_id( div, id ) {
-        d3.select( "#" + div ).select( "#" + id ).style("fill", "#ff0000").style("stroke", "#ff0000").style("fill-opacity", "1.0")
-        .style("stroke-opacity", "1.0"); // .attr("filter", "url(#selector)");
-        
+        return;        
     }
     
 	function set_font( fontname ) {
 		font = fontname
 		apply_zoom();
 	}
-    
-    /*
-    function hide_id( div, id ) {
-        d3.select( "#" + div ).select( "#" + id ).selectAll("*:not(path):not(text)").style("fill-opacity", "0.0").style("stroke-opacity", "0.0");
         
-    }
-    */
-    
     function editSet( attr, value ) {
         if (drag_id.length == 0) {
             return;
@@ -269,60 +232,6 @@ context-menus:
         var res = vrvToolkit.edit( editorAction );
         reload_page( drag_id[0] );  
     };
-
-    var drag_overlay = d3.behavior.drag().origin(function() { 
-            var t = d3.select(this);
-            id = d3.select(this).attr("id");
-            if (id != drag_id[0]) drag_id.unshift( id ); // make sure we don't add it twice
-            //hide_id( "svg_output", drag_id[0] );
-            highlight_id( "svg_overlay", drag_id[0] );
-            drag_start = d3.mouse(this);
-            // we haven't started to drag yet, this might be just a selection
-            dragging = false;
-            play_note( drag_id[0], false );
-            $('.ct-menu-n1').hide();
-            return { x: t.attr("x"), y: t.attr("y")};
-    })
-    .on("drag", function(d,i) {
-        d3.select(this).attr("transform", function(d,i) {
-            return "translate(" + [ 0 ,d3.event.y ] + ")"
-        }).style("fill-opacity", "0.0").style("stroke-opacity", "0.0");
-        this.__origin__ = [ d3.event.x,  d3.event.y];
-        // we use this to distinct from click (selection)
-        dragging = true;
-		editorAction = JSON.stringify({ action: 'drag', param: { elementId: drag_id[0], 
-                        x: parseInt(drag_start[0] + this.__origin__[0]),
-                        y: parseInt(drag_start[1] + this.__origin__[1]) }   
-	    });
-        play_note( drag_id[0], true );
-        // do something with the error...
-        var res = vrvToolkit.edit( editorAction );
-        //console.log( vrvToolkit.getLog() );
-        load_page( false );
-        highlight_id( "svg_output", drag_id[0] );    
-    })
-    .on("dragend", function(d,i) {
-        if (dragging) {
-            delete this.__origin__; 
-            reset_overlay();
-    		/*
-            editorAction = JSON.stringify({
-    					action: 'set',
-                        param: { 
-                            elementId: drag_id[0], 
-                            attrType: "accid",
-                            attrValue: "s" 
-                        }   
-    				});
-            // do something with the error...
-            var res = vrvToolkit.edit( editorAction );
-            */
-            console.log( drag_id[0] );
-            reload_page( drag_id[0] );
-            dragging = false; 
-            drag_id.length = 0;
-        }
-    });
     
 	function upload_file() {
 		
@@ -408,13 +317,14 @@ context-menus:
     </div>
 </div>
 
-<div id="svg_panel" style="background-color: #fff;">
-	<div id="svg_output" style="overflow: hidden; z-index: 1; position:absolute;" />
-    <div id="svg_overlay" style="overflow: hidden; z-index: 2; position:absolute;" data-toggle="context" data-target="#context-menu"/>
-</div>
-<div id="xml_panel" style="background-color: #fff; display: none;">
-    <pre class="prettyprint" id="xml_output"  style="overflow: auto; width: auto; word-wrap: normal;">
-    </pre>
+<div id="parent_panel" >
+	<div id="xml_panel" style="background-color: #fff;">
+    	<pre class="prettyprint" id="xml_output"  style="overflow: auto; width: auto; word-wrap: normal;">
+    	</pre>
+	</div>
+	<div id="svg_panel" style="background-color: #fff;">
+		<div id="svg_output" style="overflow: hidden; z-index: 1; position:absolute;" />
+	</div>
 </div>
 
 <!-- sidebar -->
@@ -512,6 +422,13 @@ context-menus:
             apply_zoom();
         });
         
+        $('#svg_output').on('click', ".note", function(e) {
+//            var t = e.target, tx = parseInt(t.getAttribute("x"), 10), ty = parseInt(t.getAttribute("y"), 10);
+//            console.log(t);
+
+
+        })
+
         $('input[type=radio][name=show]').change(function() {
              if (this.value == 'show_notation') {
                  toggle_XML( false );
@@ -525,7 +442,7 @@ context-menus:
             mute = !mute;
         });
         
-        $('#svg_overlay').contextmenu( {
+        $('#svg_output').contextmenu( {
             before: function (e, element, target) {
                 e.preventDefault();
                 if (drag_id.length == 0) {
