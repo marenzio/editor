@@ -37,6 +37,7 @@ context-menus:
     var dragging;
     var last_note = ["", 0]
     var mute = false;
+    var editor;
     
     function set_options( ) {
         pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
@@ -58,6 +59,11 @@ context-menus:
 	function load_data(data) {
 		set_options();
 		vrvToolkit.loadData(data);
+
+		editor.setValue(data);
+		// MM - why is this not working?
+	    editor.getSession().setMode("ace/mode/xml");
+
 		page = 1;
 		load_page();
 	}
@@ -67,8 +73,8 @@ context-menus:
 		$("#svg_output").html(svg);
 
 		// MM - uncomment to load into xml_output
-        var mei = vrvToolkit.getMEI( page );
-        $("#xml_output").text(mei);
+        //var mei = vrvToolkit.getMEI( page );
+        //$("#xml_output").text(mei);
 
 
 		adjust_page_height();
@@ -290,17 +296,14 @@ context-menus:
         </label>
     </div>
 </div>
-
-
 <div id="parent_panel">
 	<div id="xml_panel" >
-		<div id="editor" style="height: 500px; width: 500px">some text</div>
+		<div id="editor">some text</div>
 	</div>
 	<div id="svg_panel" style="background-color: #fff;">
 		<div id="svg_output" />
 	</div>
 </div>
-
 
 <!-- sidebar -->
 <div class="sidebar-offcanvas" id="sidebar" role="navigation">
@@ -400,13 +403,11 @@ context-menus:
             apply_zoom();
         });
         
-	    var editor = ace.edit("editor");
+	    editor = ace.edit("editor");
 
         $('#svg_output').on('click', ".note", function(e) {
 //            var t = e.target, tx = parseInt(t.getAttribute("x"), 10), ty = parseInt(t.getAttribute("y"), 10);
 //            console.log(t);
-
-
         })
         
         $('input[type=checkbox][name=mute]').change(function() {
