@@ -41,7 +41,7 @@ context-menus:
     
     function set_options( ) {
         pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
-        pageWidth = ($(document).width()) * 100 / zoom ; // - $( "#sidbar" ).width();
+        pageWidth = ($('#svg_panel').width()) * 100 / zoom ; // - $( "#sidbar" ).width();
 		border = 50;
 		options = JSON.stringify({
 					inputFormat: 'mei',
@@ -61,12 +61,15 @@ context-menus:
 		vrvToolkit.loadData(data);
 
 		editor.setValue(data);
-		// MM - why is this not working?
-	    editor.getSession().setMode("ace/mode/xml");
+		editor.moveCursorTo(new Number(0), new Number(0));
 
 		page = 1;
 		load_page();
 	}
+
+	function updateACE(data) {}
+
+	function updateVerovio(data) {}
 
 	function load_page() {
 		svg = vrvToolkit.renderPage(page, "");
@@ -92,7 +95,7 @@ context-menus:
         }
         load_page();
     }
-    
+
     function play_note( id, update ) {
         if ( mute ) {
             return;
@@ -189,9 +192,30 @@ context-menus:
 		}
 	}
     
-    function highlight_id( div, id ) {
-        return;        
+    function highlight_id( id_string ) {
+		$(id_string).css({
+            "fill": "#ff0000",
+            "stroke": "#ff0000",
+            "fill-opacity": "1.0",
+            "stroke-opacity": "1.0"
+        });      
+    	return;
     }
+
+    function removeHighlight( id_string ) {
+		$(id_string).css({
+			"fill": "#000000",
+            "stroke": "#000000",
+            "fill-opacity": "1.0",
+            "stroke-opacity": "1.0"
+        });      
+    	return;
+    }
+
+	function resizeAce() {
+	 	$('#editor').height($(window).height() - $("#navbar").height());
+	 	$('#editor').width($("#xml_panel").width());
+	};
     
 	function set_font( fontname ) {
 		font = fontname
@@ -298,7 +322,7 @@ context-menus:
 </div>
 <div id="parent_panel">
 	<div id="xml_panel" >
-		<div id="editor">some text</div>
+		<div id="editor"></div>
 	</div>
 	<div id="svg_panel" style="background-color: #fff;">
 		<div id="svg_output" />
@@ -404,16 +428,52 @@ context-menus:
         });
         
 	    editor = ace.edit("editor");
+   	    editor.getSession().setMode("ace/mode/xml");
+   	    editor.$blockScrolling = Infinity;  // included to disable warning message
+		resizeAce();		
+
 
         $('#svg_output').on('click', ".note", function(e) {
-//            var t = e.target, tx = parseInt(t.getAttribute("x"), 10), ty = parseInt(t.getAttribute("y"), 10);
-//            console.log(t);
+            var t = e.target;
+
+            // if we clicked a note:
+            if (t.parentNode.getAttribute("class") == "note") {
+		        var id = t.parentNode.attributes.id.value;
+
+		        if (drag_id.indexOf(id) == -1) { // make sure we don't add it twice
+		            drag_id.unshift(id);
+					highlight_id("#" + id + " > use");
+	    	    }
+	        	else {
+        	    	drag_id.splice( drag_id.indexOf(id), 1);
+           			removeHighlight("#" + id + " > use");
+		        }
+
+		        editor.find('xml:id="' + id + '"');
+    	    }
+    	    // else if we clicked a lyric
+            else if (t.parentNode.tagName == "text") {
+            	var id = t.closest(".note").attributes.id.value;
+                var verse_id = t.closest(".verse").attributes.id.value
+
+                if (drag_id.indexOf(verse_id) == -1) {
+                	drag_id.unshift(verse_id);
+               	    highlight_id("#" + id + " > .verse");
+                }
+                else {
+					drag_id.splice( drag_id.indexOf(verse_id), 1);
+           			removeHighlight("#" + id + " > .verse");
+                }
+   		        editor.find('xml:id="' + id + '"');
+            }
         })
         
         $('input[type=checkbox][name=mute]').change(function() {
             mute = !mute;
         });
-        
+
+		$(window).resize(resizeAce);
+
         $('#svg_output').contextmenu( {
             before: function (e, element, target) {
                 e.preventDefault();
@@ -433,12 +493,12 @@ context-menus:
       		}
       	});
         
-		// Adjust the size of the svg_output and the zoom according to the div (screen) size
-		width = $('#svg_panel').width();
+       	// Adjust the size of the svg_output and the zoom according to the div (screen) siz
+       	width = $('#svg_panel').width();
 		zoom = Math.min( Math.floor( 100 * width / 2100 ), 40 );
 	
 		// Load the default file or the file passed in the URL
-		var file = location.search.substring(1);
+	 	var file = location.search.substring(1);
         console.log( file );
 		if (file.length == 0) {
             file = "examples/downloads/Marenzio_Sesto_a_5_01.mei";
