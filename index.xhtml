@@ -26,6 +26,7 @@ context-menus:
 //<![CDATA[
     
 	var vrvToolkit = new verovio.toolkit();
+//	var UndoManager = new UndoStack(null);
 	var page = 1;
 	var zoom = 50;
 	var pageHeight = 2970;
@@ -63,6 +64,8 @@ context-menus:
 		var mei = vrvToolkit.getMEI(0, 1 );
 		editor.setValue(mei);
 		editor.moveCursorTo(new Number(0), new Number(0));
+		UndoManager = require("ace/undomanager").UndoManager;
+		editor.getSession().setUndoManager(new UndoManager());
 
 		page = 1;
 		load_page();
@@ -71,6 +74,14 @@ context-menus:
 	function updateACE(data) {}
 
 	function updateVerovio(data) {}
+
+	function undoAce() {
+		editor.getSession().getUndoManager().undo();
+	}
+
+	function redoAce() {
+		editor.getSession().getUndoManager().redo();
+	}
 
 	function load_page() {
 		svg = vrvToolkit.renderPage(page, "");
@@ -296,6 +307,18 @@ context-menus:
             <li><a href="#">Separated link</a></li>-->
         </ul>
     </div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default btn-sm">Edit</button>
+        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="#" onclick="save_file(); return false;">Save</a></li>        	
+            <li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
+            <li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
+        </ul>
+    </div>
     <div class="btn-group" role="group">
 			<button onclick="zoom_out()" class="btn btn-sm btn-default" type="button">
 				<span class="glyphicon glyphicon-zoom-out"/>
@@ -378,12 +401,8 @@ context-menus:
 					<p id="log_p"></p>
 				</div>
 				-->
-			</form>
-			<div>
-				<button onclick="save_file()">Save File</button>
-			</div>			
+			</form>		
 		</div>
-        
 	</div>
 </div>
 
@@ -437,8 +456,7 @@ context-menus:
 	    editor = ace.edit("editor");
    	    editor.getSession().setMode("ace/mode/xml");
    	    editor.$blockScrolling = Infinity;  // included to disable warning message
-		resizeAce();		
-
+		resizeAce();
 
         $('#svg_output').on('click', ".note", function(e) {
             var t = e.target;
