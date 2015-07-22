@@ -60,7 +60,8 @@ context-menus:
 		set_options();
 		vrvToolkit.loadData(data);
 
-		editor.setValue(data);
+		var mei = vrvToolkit.getMEI(0, 1 );
+		editor.setValue(mei);
 		editor.moveCursorTo(new Number(0), new Number(0));
 
 		page = 1;
@@ -74,13 +75,7 @@ context-menus:
 	function load_page() {
 		svg = vrvToolkit.renderPage(page, "");
 		$("#svg_output").html(svg);
-
-		// MM - uncomment to load into xml_output
-        //var mei = vrvToolkit.getMEI( page );
-        //$("#xml_output").text(mei);
-
-
-		adjust_page_height();
+	//	adjust_page_height();
 	};
     
     function reload_page( id ) {
@@ -213,7 +208,7 @@ context-menus:
     }
 
 	function resizeAce() {
-	 	$('#editor').height($(window).height() - $("#navbar").height());
+	 	$('#editor').height($(window).height() - $("#navbar").height() - 4);
 	 	$('#editor').width($("#xml_panel").width());
 	};
     
@@ -262,6 +257,16 @@ context-menus:
 		// Read in the image file as a data URL.
 		reader.readAsText(f);
 	};
+
+	function save_file() {
+		var fileName = prompt("Please enter the file name", "file.mei");
+
+		if (fileName != null ) {
+			var mei = editor.getValue();
+			var meiBlob = new Blob([mei], {type: "text/plain;charset=utf-8"});
+			saveAs(meiBlob, fileName);
+		}
+	}
 
 //]]>
 </script>
@@ -373,8 +378,10 @@ context-menus:
 					<p id="log_p"></p>
 				</div>
 				-->
-	
 			</form>
+			<div>
+				<button onclick="save_file()">Save File</button>
+			</div>			
 		</div>
         
 	</div>
@@ -464,7 +471,7 @@ context-menus:
 					drag_id.splice( drag_id.indexOf(verse_id), 1);
            			removeHighlight("#" + id + " > .verse");
                 }
-   		        editor.find('xml:id="' + id + '"');
+   		        editor.find('xml:id="' + verse_id + '"');
             }
         })
         
