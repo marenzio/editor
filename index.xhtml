@@ -71,9 +71,59 @@ context-menus:
 		load_page();
 	}
 
-	function updateACE(data) {}
+	function updateACE() {
+		var mei = vrvToolkit.getMEI(0, 1 );
+		editor.setValue(mei);
+		editor.moveCursorTo(new Number(0), new Number(0));		
+	}
 
-	function updateVerovio(data) {}
+	function updateVerovio() {
+		var data = editor.getValue();
+		set_options();
+		vrvToolkit.loadData(data);
+		load_page();
+	}
+
+	function fetchAnnot(fileName, id_cache, type) {
+		$.get(fileName, function( annot ) {
+			addCriticalNote(id_cache, annot, type);
+		}, 'text');
+	}
+
+	function addCriticalNote(id_cache, annot, type) {
+		switch (type) {
+			case "music":
+				if (id_cache.length != 1) return;
+				var id = id_cache[0];
+				editor.find(id);
+				editor.find('</measure>',{
+					    backwards: false,
+					    wrap: true
+				});
+				editor.find(' ',{
+					    backwards: true,
+					    wrap: true
+				});
+
+				var pos = editor.selection.getCursor();
+				var tabSize = editor.getSession().getTabSize();		
+				var measureTabs = pos.column/tabSize;
+
+				editor.gotoLine(pos.row + 1);
+				for (var i = 0; i < measureTabs+1; i++) editor.indent();		
+				editor.insert(annot);
+
+				editor.find('plist=""',{
+					    backwards: true,
+					    wrap: true
+				});
+				editor.insert('plist="' + id_cache[0] + '"');
+				break;
+
+			case "lyric":
+				break;
+		}
+	}
 
 	function undoAce() {
 		editor.getSession().getUndoManager().undo();
@@ -314,11 +364,15 @@ context-menus:
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href="#" onclick="save_file(); return false;">Save</a></li>        	
+            <li><a href="#" onclick="save_file(); return false;">Save</a></li>
             <li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
             <li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="transposeOctave(); return false">Transpose octave</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Add Critical Music Note</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'music'); return false;">Add Critical Lyric Note</a></li>
+            <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
+            <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li>            
         </ul>
     </div>
     <div class="btn-group" role="group">
@@ -434,15 +488,15 @@ context-menus:
 			if ( event.ctrlKey && (event.keyCode == 37) ) {
 				first_page();
 			}
-			else if ( event.keyCode == 37 ) {
-				prev_page();
-			}
+//			else if ( event.keyCode == 37 ) {
+//				prev_page();
+//			}
 			else if ( event.ctrlKey && (event.keyCode == 39) ) {
 				last_page();
 			}
-			else if ( event.keyCode == 39 ) {
-				next_page();
-			}
+//			else if ( event.keyCode == 39 ) {
+//				next_page();
+//			}
 			else if ( event.keyCode == 107 ) {
 				zoom_in();
 			}
