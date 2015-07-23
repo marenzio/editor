@@ -3,9 +3,9 @@ layout: editor
 title: MEI Editor for MODE
 
 downloads:
-    - name: "Marenzio Madrigal a 5"
-      description: "Lib. 6, S’io parto, 4 pages - 119Kb"
-      link: "Marenzio_Sesto_a_5_01.mei"
+    - name: "Marenzio Madrigal a 6"
+      description: "Lib. 4, Di nettare amoroso"
+      link: "M-04-6-02.mei"
 context-menus:
     - { name: "Breve", icon: "keyboard-00", class: "note", action: "editSet('dur', 'breve')" }
     - { name: "Whole", icon: "keyboard-01", class: "note", action: "editSet('dur', '1')" }
@@ -528,7 +528,7 @@ context-menus:
 	 	var file = location.search.substring(1);
         console.log( file );
 		if (file.length == 0) {
-            file = "examples/downloads/Marenzio_Sesto_a_5_01.mei";
+            file = "examples/downloads/M-04-6-02.mei";
         }
 		$( "#toggle_options" ).click();
 		$.get( file , function( data ) {
