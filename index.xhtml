@@ -469,11 +469,11 @@ context-menus:
 
 		        if (drag_id.indexOf(id) == -1) { // make sure we don't add it twice
 		            drag_id.unshift(id);
-					highlight_id("#" + id + " > use");
+					highlight_id("#" + id + " > rect, #" + id + " > use");
 	    	    }
 	        	else {
         	    	drag_id.splice( drag_id.indexOf(id), 1);
-           			removeHighlight("#" + id + " > use");
+           			removeHighlight("#" + id + " > *");
 		        }
 
 		        editor.find('xml:id="' + id + '"');
