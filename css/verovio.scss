@@ -48,23 +48,6 @@ p a {
 	text-decoration: underline;
 }
 
-.sublist-group a {
-	padding: 4px 15px;
-}
-
-.panel-option {
-	padding: 4px 8px;
-}
-
-.panel-supported-mei {
-	padding: 8px 8px;
-}
-
-code.panel-header {
-	background-color: #464646;
-	color: #f9f2f4;
-}
-
 .footer {
     bottom: 0px;
     width: 100%;
@@ -75,76 +58,6 @@ code.panel-header {
     p {
         text-align: center;
     }
-}
-
-// Fixing strange blinking text in carousel with Safari
-.carousel-inner {
-  -webkit-transform-style: preserve-3d;
-}
-
-.carousel-description {
-    display: none;
-}
-
-// Does not work with Firefox and not very well with Safari
-@media print 
-{
-    body {
-		margin: 0px;
-		padding: 0px;
-		width:940px;
-	}
-	.panel {
-		padding: 0px;
-		margin: 0px;
-	}
-	.panel-default {
-		border: 0px;
-		padding: 0px;
-		margin: 0 30px;
-	}
-    #sidebar {
-        display: none;
-    }
-}
-
-span.keyboard-00 { background-image: url(icons/00.png) !important; }
-span.keyboard-01 { background-image: url(icons/01.png) !important; }
-span.keyboard-02 { background-image: url(icons/02.png) !important; }
-span.keyboard-04 { background-image: url(icons/04.png) !important; }
-span.keyboard-08 { background-image: url(icons/08.png) !important; }
-span.keyboard-16 { background-image: url(icons/16.png) !important; }
-span.keyboard-32 { background-image: url(icons/32.png) !important; }
-span.keyboard-64 { background-image: url(icons/64.png) !important; }
-span.keyboard-rest { background-image: url(icons/rest.png) !important; }
-span.keyboard-dot { background-image: url(icons/dot.png) !important; }
-span.keyboard-barline { background-image: url(icons/barline.png) !important; }
-
-span.keyboard-00,
-span.keyboard-01,
-span.keyboard-02,
-span.keyboard-04,
-span.keyboard-08,
-span.keyboard-16,
-span.keyboard-32,
-span.keyboard-64,
-span.keyboard-rest,
-span.keyboard-dot,
-span.keyboard-barline
-{
-	top: 3px; 
-	height: 18px;
-	margin: 0px !important;
-	left: -4px;
-	width: 14px !important;
-}
-
-table.keyboard {
-	width: 100%;
-}
-td.keyboard {
-	text-align: center;
-	padding: 10px;
 }
 
 #parent_panel {
@@ -165,4 +78,5 @@ td.keyboard {
 	position: absolute;
 	height: 500px;
 	width: 570px;
+    border-right: 2px solid #ccc;
 }
