@@ -3,9 +3,9 @@ layout: editor
 title: MEI Editor for MODE
 
 downloads:
-    - name: "Marenzio Madrigal a 5"
-      description: "Lib. 6, S’io parto, 4 pages - 119Kb"
-      link: "Marenzio_Sesto_a_5_01.mei"
+    - name: "Marenzio Madrigal a 6"
+      description: "Lib. 4, Di nettare amoroso"
+      link: "M-04-6-02.mei"
 context-menus:
     - { name: "Breve", icon: "keyboard-00", class: "note", action: "editSet('dur', 'breve')" }
     - { name: "Whole", icon: "keyboard-01", class: "note", action: "editSet('dur', '1')" }
@@ -333,6 +333,8 @@ context-menus:
             <li><a href="#" onclick="saveFile(); return false;">Save</a></li>
             <li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
             <li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="transposeOctave(); return false">Transpose octave</a></li>
             <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Add Critical Music Note</a></li>
             <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'music'); return false;">Add Critical Lyric Note</a></li>
             <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
@@ -485,11 +487,11 @@ context-menus:
 
 		        if (drag_id.indexOf(id) == -1) { // make sure we don't add it twice
 		            drag_id.unshift(id);
-					highlight_id("#" + id + " > use");
+					highlight_id("#" + id + " > rect, #" + id + " > use");
 	    	    }
 	        	else {
         	    	drag_id.splice( drag_id.indexOf(id), 1);
-           			removeHighlight("#" + id + " > use");
+           			removeHighlight("#" + id + " > *");
 		        }
 
 		        editor.find('xml:id="' + id + '"');
@@ -533,7 +535,7 @@ context-menus:
 	 	var file = location.search.substring(1);
         console.log( file );
 		if (file.length == 0) {
-            file = "examples/downloads/Marenzio_Sesto_a_5_01.mei";
+            file = "examples/downloads/M-04-6-02.mei";
         }
 		$( "#toggle_options" ).click();
 		$.get( file , function( data ) {
