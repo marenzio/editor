@@ -81,6 +81,7 @@ context-menus:
 		set_options();
 		vrvToolkit.loadData(data);
 		load_page();
+		drag_id.length = 0;
 	}
 
 	function fetchAnnot(fileName, id_cache, type) {
@@ -117,6 +118,10 @@ context-menus:
 					    wrap: true
 				});
 				editor.insert('plist="' + id_cache[0] + '"');
+				break;
+
+			case "musicMeasure":
+
 				break;
 
 			case "lyric":
@@ -250,7 +255,7 @@ context-menus:
 		    	case "note":
 					highlight_id("#" + id + " > rect, #" + id + " > use");
 		    		break;
-		    	case "verse":
+				default:
 					highlight_id("#" + id);
 		    		break;
 		    }
@@ -381,6 +386,7 @@ context-menus:
         </button>
         <ul class="dropdown-menu" role="menu">
             <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Add Critical Music Note</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Add Critical Music Note (measure)</a></li>            
             <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'music'); return false;">Add Critical Lyric Note</a></li>
         </ul>
     </div>
@@ -471,9 +477,9 @@ context-menus:
 
 		document.getElementById('fileinput').addEventListener('change', openFile, false);
 
+		// Combine click functions for note and rest?
         $('#svg_output').on('click', ".note", function(e) {
             var t = e.target;
-
             // if we clicked a note:
             if (t.parentNode.getAttribute("class") == "note") {
 		        var id = t.parentNode.attributes.id.value;
@@ -499,10 +505,24 @@ context-menus:
                 }
                 else {
 					drag_id.splice( drag_id.indexOf(verse_id), 1);
-						removeHighlight("#" + verse_id);
+					removeHighlight("#" + verse_id);
                 }
    		        editor.find('xml:id="' + verse_id + '"');
             }
+        })
+
+        $('#svg_output').on('click', ".mRest, .rest", function(e) {
+            var t = e.target;
+	        var id = t.parentNode.attributes.id.value;
+	        //console.log(t.parentNode.getAttribute("class"));
+	        if (drag_id.indexOf(id) == -1) {
+	        	drag_id.unshift(id);
+		        highlight_id("#" + id);
+	        }
+	        else {
+				drag_id.splice( drag_id.indexOf(id), 1);
+				removeHighlight("#" + id);
+	        }
         })
 
 		$(window).resize(resizeAce);
