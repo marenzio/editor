@@ -26,7 +26,6 @@ context-menus:
 //<![CDATA[
     
 	var vrvToolkit = new verovio.toolkit();
-//	var UndoManager = new UndoStack(null);
 	var page = 1;
 	var zoom = 50;
 	var pageHeight = 2970;
@@ -38,10 +37,11 @@ context-menus:
     var dragging;
     var last_note = ["", 0]
     var editor;
+    var fileName;
     
     function set_options( ) {
         pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
-        pageWidth = ($('#svg_panel').width()) * 100 / zoom ; // - $( "#sidbar" ).width();
+        pageWidth = ($('#svg_panel').width()) * 100 / zoom ;
 		border = 50;
 		options = JSON.stringify({
 					inputFormat: 'mei',
@@ -70,7 +70,7 @@ context-menus:
 		load_page();
 	}
 
-	function updateACE() {
+	function updateAce() {
 		var mei = vrvToolkit.getMEI(0, 1 );
 		editor.setValue(mei);
 		editor.moveCursorTo(new Number(0), new Number(0));		
@@ -283,8 +283,6 @@ context-menus:
 	};
 
 	function saveFile() {
-		var fileName = prompt("Please enter the file name", "file.mei");
-
 		if (fileName != null ) {
 			var mei = editor.getValue();
 			var meiBlob = new Blob([mei], {type: "text/plain;charset=utf-8"});
@@ -293,15 +291,14 @@ context-menus:
 	}
 
 	function openFile(evt) {
-    	//Retrieve the first (and only!) File from the FileList object
     	var f = evt.target.files[0]; 
 
 	    if (f) {
       		var r = new FileReader();
-      		r.onload = function(e) { 
-	      	var contents = e.target.result;
-	      	load_data(contents);
-
+      		r.onload = function(e) {
+      			fileName = f.name;
+	      		var contents = e.target.result;
+	      		load_data(contents);
       	}
       	r.readAsText(f);
 	    } else { 
@@ -314,8 +311,8 @@ context-menus:
 
     
 <!-- top navbar -->
-<div id="navbar" class="navbar navbar-default navbar-with-sidebar">
-    <button type="button" class="navbar-toggle sidebar-toggle" data-toggle="offcanvas" data-target=".sidebar-nav">
+<div id="navbar" class="navbar navbar-default">
+    <button type="button" class="navbar-toggle" data-toggle="offcanvas">
          <span class="icon-bar"></span>
          <span class="icon-bar"></span>
          <span class="icon-bar"></span> 
@@ -324,23 +321,41 @@ context-menus:
         <img src="{{ site.baseurl }}/images/verovio-fadded-50.png" />
     </a>
     <div class="btn-group">
+        <button type="button" class="btn btn-default btn-sm">File</button>
+        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+			<li><a href="#" onclick="$('#fileinput').trigger('click'); return false;">Open</a>
+				<input id="fileinput" type="file" style="display: none;" /></li>
+            <li><a href="#" onclick="saveFile(); return false;">Save</a></li>
+        </ul>
+    </div>           
+    <div class="btn-group">
         <button type="button" class="btn btn-default btn-sm">Edit</button>
         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <span class="caret"></span>
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href="#" onclick="saveFile(); return false;">Save</a></li>
             <li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
             <li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="transposeOctave(); return false">Transpose octave</a></li>
+            <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
+            <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 	
+        </ul>
+    </div>
+        <div class="btn-group">
+        <button type="button" class="btn btn-default btn-sm">Insert</button>
+        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
             <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Add Critical Music Note</a></li>
             <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'music'); return false;">Add Critical Lyric Note</a></li>
-            <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
-            <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 
-			<li><a href="#" onclick="$('#fileinput').trigger('click'); return false;">Open</a>
-				<input id="fileinput" type="file" style="display: none;" /></li>		
         </ul>
     </div>
     <div class="btn-group" role="group">
@@ -375,54 +390,6 @@ context-menus:
 	</div>
 </div>
 
-<!-- sidebar -->
-<div class="sidebar-offcanvas" id="sidebar" role="navigation">
-	<div class="sidebar-panel">
-		<div class="row">
-			<div class="col-xs-12">
-				<h4>Examples</h4>
-			</div>
-		</div>
-		<div id="downloads_panel_body">
-			<div class="row">
-				<div class="col-md-12">
-					{% for d in page.downloads %}
-					<p><a href="{{ site.baseurl }}/{{ page.name }}?examples/downloads/{{ d.link }}">{{ d.name }}</a><br/>
-						 {{ d.description }}
-					 </p>
-					{% endfor %}
-				</div>
-				<!-- /.col-md-6 -->
-			</div>
-			<!-- /.row -->
-		</div>
-        
-		<div class="row">
-			<div class="col-xs-12">
-				<h4>Select MEI file</h4>
-			</div>
-		</div>
-    
-		<div id="options_panel_body">
-			<form id="upload_form" onsubmit="upload_file( $('#upload_form') ); return false" class="form-inline" role="form">
-				<div class="row">
-					<div class="col-md-12">
-						<input type="file" id="mei_files" onchange="$('#submit-btn').popover('show');" name="file" style="margin: 4px 0px 8px 0px;"/>
-					</div>
-					<div class="col-md-12">
-						<button type="submit" id="submit-btn" class="btn btn-default btn-sm popover-btn" data-container="body" data-toggle="popover" data-placement="left" data-content="Click to display the MEI file!" data-trigger="manual">Render</button>
-					</div>
-				</div>
-
-				<!--><div id="log_panel" style="display: none">
-					<hr class="panel"/>
-					<p id="log_p"></p>
-				</div>
-				-->
-			</form>		
-		</div>
-	</div>
-</div>
 
 <div id="context-menu">
     <ul class="dropdown-menu" role="menu">
@@ -491,7 +458,7 @@ context-menus:
 	    	    }
 	        	else {
         	    	drag_id.splice( drag_id.indexOf(id), 1);
-           			removeHighlight("#" + id + " > *");
+					removeHighlight("#" + id + " > rect, #" + id + " > use");
 		        }
 
 		        editor.find('xml:id="' + id + '"');
@@ -503,11 +470,11 @@ context-menus:
 
                 if (drag_id.indexOf(verse_id) == -1) {
                 	drag_id.unshift(verse_id);
-               	    highlight_id("#" + id + " > .verse");
+               	    highlight_id("#" + id + " .verse");
                 }
                 else {
 					drag_id.splice( drag_id.indexOf(verse_id), 1);
-           			removeHighlight("#" + id + " > .verse");
+           			removeHighlight("#" + id + " .verse");
                 }
    		        editor.find('xml:id="' + verse_id + '"');
             }
@@ -533,9 +500,11 @@ context-menus:
 	
 		// Load the default file or the file passed in the URL
 	 	var file = location.search.substring(1);
-        console.log( file );
+	 	//fileName = file.replace(/^.*[\\\/]/, '');
+        console.log( file, fileName );
 		if (file.length == 0) {
             file = "examples/downloads/M-04-6-02.mei";
+            fileName = "M-04-6-02.mei";
         }
 		$( "#toggle_options" ).click();
 		$.get( file , function( data ) {
