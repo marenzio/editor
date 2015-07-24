@@ -157,6 +157,7 @@ context-menus:
 		}
 		page = page + 1;
 		load_page();
+		reapplyHighlights();
 	};
 
 	function prev_page() {
@@ -165,23 +166,33 @@ context-menus:
 		}
 		page = page - 1;
 		load_page();
+		reapplyHighlights();
 	};
 
 	function first_page() {
 		page = 1;
 		load_page();
+		reapplyHighlights();		
 	};
 	
 	function last_page() {
 		page = vrvToolkit.getPageCount();
 		load_page();
+		reapplyHighlights();
 	};
 
 	function apply_zoom() {
 		set_options();
 		vrvToolkit.redoLayout();
-		page = 1;
+
+		if (drag_id.length > 0) {
+			page = vrvToolkit.getPageWithElement(drag_id[0]);
+		}
+		else {
+			page = 1;
+		}
 		load_page();
+		reapplyHighlights();
 	}
 
 	function zoom_out() {
@@ -207,7 +218,7 @@ context-menus:
             if ( zoomed_height < $('#svg_panel svg').height() ) {
                 zoomed_height = $('#svg_panel svg').height();
             }
-			$('#svg_output').height( zoomed_height ); // slighly more for making sure we have no scroll bar	
+			$('#svg_output').height( zoomed_height ); // slightly more for making sure we have no scroll bar	
 		}
 	}
     
@@ -229,6 +240,21 @@ context-menus:
             "stroke-opacity": "1.0"
         });      
     	return;
+    }
+
+    function reapplyHighlights() {
+    	for(var i = 0; i < drag_id.length; i++) {
+    		var id = drag_id[i];
+		    var type = $(document.getElementById(id)).attr("class");
+		    switch (type) {
+		    	case "note":
+					highlight_id("#" + id + " > rect, #" + id + " > use");
+		    		break;
+		    	case "verse":
+					highlight_id("#" + id);
+		    		break;
+		    }
+    	}
     }
 
 	function resizeAce() {
@@ -465,16 +491,15 @@ context-menus:
     	    }
     	    // else if we clicked a lyric
             else if (t.parentNode.tagName == "text") {
-            	var id = t.closest(".note").attributes.id.value;
                 var verse_id = t.closest(".verse").attributes.id.value
 
                 if (drag_id.indexOf(verse_id) == -1) {
                 	drag_id.unshift(verse_id);
-               	    highlight_id("#" + id + " .verse");
+						highlight_id("#" + verse_id);
                 }
                 else {
 					drag_id.splice( drag_id.indexOf(verse_id), 1);
-           			removeHighlight("#" + id + " .verse");
+						removeHighlight("#" + verse_id);
                 }
    		        editor.find('xml:id="' + verse_id + '"');
             }
@@ -500,8 +525,8 @@ context-menus:
 	
 		// Load the default file or the file passed in the URL
 	 	var file = location.search.substring(1);
-	 	//fileName = file.replace(/^.*[\\\/]/, '');
-        console.log( file, fileName );
+	 	fileName = file.replace(/^.*[\\\/]/, '');
+
 		if (file.length == 0) {
             file = "examples/downloads/M-04-6-02.mei";
             fileName = "M-04-6-02.mei";
