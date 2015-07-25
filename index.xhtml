@@ -204,6 +204,8 @@ context-menus:
 				editor.removeLines();
 				editor.navigateUp(1);			
 		}
+
+		clearHighlights();
 	}
 
 	function countTabs(string) { 
@@ -353,6 +355,22 @@ context-menus:
 		    }
     	}
     }
+
+    function clearHighlights() {
+    	for(var i = 0; i < drag_id.length; i++) {
+    		var id = drag_id[i];
+		    var type = $(document.getElementById(id)).attr("class");
+		    switch (type) {
+		    	case "note":
+					removeHighlight("#" + id + " > rect, #" + id + " > use");
+		    		break;
+				default:
+					removeHighlight("#" + id);
+		    		break;
+		    }
+    	}
+    	drag_id.length = 0;
+    }    
 
 	function resizeAce() {
 	 	$('#editor').height($(window).height() - $("#navbar").height() - 4);
@@ -516,20 +534,17 @@ context-menus:
 			if ( event.ctrlKey && (event.keyCode == 37) ) {
 				first_page();
 			}
-//			else if ( event.keyCode == 37 ) {
-//				prev_page();
-//			}
 			else if ( event.ctrlKey && (event.keyCode == 39) ) {
 				last_page();
 			}
-//			else if ( event.keyCode == 39 ) {
-//				next_page();
-//			}
 			else if ( event.keyCode == 107 ) {
 				zoom_in();
 			}
 			else if ( event.keyCode == 109 ) {
 				zoom_out();
+			}
+			else if ( event.keyCode == 27 ) {
+				clearHighlights();
 			}
 		});
         
