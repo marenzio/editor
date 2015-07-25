@@ -266,11 +266,6 @@ context-menus:
 	 	$('#editor').height($(window).height() - $("#navbar").height() - 4);
 	 	$('#editor').width($("#xml_panel").width());
 	};
-    
-	function set_font( fontname ) {
-		font = fontname
-		apply_zoom();
-	}
         
     function editSet( attr, value ) {
         if (drag_id.length == 0) {
@@ -294,24 +289,6 @@ context-menus:
         var res = vrvToolkit.edit( editorAction );
         reload_page( drag_id[0] );  
     };
-    
-	function upload_file() {
-		
-		$('#submit-btn').popover('hide');
-		var f = $("#mei_files").prop('files')[0];
-		var reader = new FileReader();
-
-		// Closure to capture the file information.
-		reader.onload = (function(theFile) {
-			return function(e) {
-                $('.row-offcanvas').toggleClass('active');
-				load_data(e.target.result);
-			};
-		})(f);
-
-		// Read in the image file as a data URL.
-		reader.readAsText(f);
-	};
 
 	function saveFile() {
 		if (fileName != null ) {
@@ -330,10 +307,10 @@ context-menus:
       			fileName = f.name;
 	      		var contents = e.target.result;
 	      		load_data(contents);
-      	}
-      	r.readAsText(f);
+      	    }
+      	    r.readAsText(f);
 	    } else { 
-      	alert("Failed to load file");
+      	    alert("Failed to load file");
 	    }
 	}
 
@@ -433,9 +410,6 @@ context-menus:
 	    {% endfor %}
     </ul>
 </div>
-
-
-
 
 <script type="text/javascript">
 //<![CDATA[
