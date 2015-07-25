@@ -189,8 +189,20 @@ context-menus:
 					    wrap: true
 				});
 				editor.insert('plist="' + id_string + '"');	
-
 				break;
+
+			case "tempo":
+				var id = id_cache[0];
+				editor.find("xml:id=\"" + id + "\"");
+				editor.find("</measure>",{
+					backwards: false
+				});
+				editor.navigateUp(1);
+				editor.navigateLineEnd();
+				editor.insert("\n");
+				editor.insert(annot);
+				editor.removeLines();
+				editor.navigateUp(1);			
 		}
 	}
 
@@ -442,9 +454,10 @@ context-menus:
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Add Critical Music Note</a></li>
-            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Add Critical Music Note (measure)</a></li>            
-            <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;">Add Critical Lyric Note</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;"> Critical Music Note</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Critical Music Note (measure)</a></li>            
+            <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;"> Critical Lyric Note</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/tempoAnnot.xml', drag_id, 'tempo'); return false;">Tempo Indication</a></li>
         </ul>
     </div>
     <div class="btn-group" role="group">
