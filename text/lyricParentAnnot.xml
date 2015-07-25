@@ -1,0 +1,8 @@
+<annot label="app-text">
+    <annot label="">
+        <list>
+            <li>lyric</li>
+        </list>
+        <annot plist="">critical note</annot>
+    </annot>
+</annot>

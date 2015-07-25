@@ -85,34 +85,41 @@ context-menus:
 	}
 
 	function fetchAnnot(fileName, id_cache, type) {
+		// in case parent of lyric annot does not exist
+		if (type == "lyric") {
+			if (editor.find('label="app-text"') == null) {
+				fileName = "text/lyricParentAnnot.xml";
+				type = "lyricParent";
+			}
+		}
+		// in case we want a critical note for the measure.  The code is otherwise the same.
+		else if (type == "musicMeasure") {
+			measureId = $(document.getElementById(id_cache[0])).closest(".measure").attr("id");
+			id_cache = [measureId];
+			type = "music";
+		}
+
 		$.get(fileName, function( annot ) {
 			addCriticalNote(id_cache, annot, type);
 		}, 'text');
 	}
 
+	// note: move tab-finding code to independent function
+	// Also, see if you can 
 	function addCriticalNote(id_cache, annot, type) {
 		switch (type) {
 			case "music":
 				if (id_cache.length != 1) return;
 				var id = id_cache[0];
-				editor.find(id);
-				editor.find('</measure>',{
-					    backwards: false,
-					    wrap: true
+				editor.find("xml:id=\"" + id + "\"");
+				editor.find("</measure>",{
+					backwards: false
 				});
-				editor.find(' ',{
-					    backwards: true,
-					    wrap: true
-				});
-
-				var pos = editor.selection.getCursor();
-				var tabSize = editor.getSession().getTabSize();		
-				var measureTabs = pos.column/tabSize;
-
-				editor.gotoLine(pos.row + 1);
-				for (var i = 0; i < measureTabs+1; i++) editor.indent();		
+				editor.navigateUp(1);
+				editor.navigateLineEnd();
+				editor.insert("\n");
 				editor.insert(annot);
-
+				editor.removeLines();
 				editor.find('plist=""',{
 					    backwards: true,
 					    wrap: true
@@ -120,13 +127,86 @@ context-menus:
 				editor.insert('plist="' + id_cache[0] + '"');
 				break;
 
-			case "musicMeasure":
+			case "lyric":
+				// create string with all ids separated by spaces
+				var id_string = "";
+				for (var i = id_cache.length - 1; i > 0; i--) {
+                        id_string = id_string.concat(id_cache[i] + " ");
+                    }
+                id_string = id_string.concat(id_cache[0]);
 
+				editor.find('label="app-text"')
+				var tabs = countTabs("<annot");
+
+				// insert annotation and add indentation
+				editor.navigateUp(1);
+				editor.navigateLineEnd();
+				editor.insert("\n");
+				editor.insert(annot);
+				editor.removeLines();
+				for (var i = 0; i < 5; i++) {
+					editor.navigateUp(1);
+					editor.navigateLineStart();
+					for (var j = 0; j < tabs; j++) {
+						editor.indent();
+					}
+				}
+
+				// replace plist
+				editor.find('plist=""',{
+					    backwards: false,
+					    wrap: true
+				});
+				editor.insert('plist="' + id_string + '"');	
 				break;
 
-			case "lyric":
+			case "lyricParent":
+				editor.find("</section>")
+				var tabs = countTabs("</section>");
+
+				editor.navigateUp(1);
+				editor.navigateLineEnd();
+				editor.insert("\n");
+				editor.insert(annot);
+
+				editor.removeLines();
+				for (var i = 0; i < 7; i++) {
+					editor.navigateUp(1);
+					editor.navigateLineStart()
+					for (var j = 0; j < tabs + 1; j++) {
+						editor.indent();
+					}
+				}
+
+				// create string with all ids separated by spaces and replace plist
+				var id_string = "";
+				for (var i = id_cache.length - 1; i > 0; i--) {
+                        id_string = id_string.concat(id_cache[i] + " ");
+                    }
+                id_string = id_string.concat(id_cache[0]);
+				editor.find('plist=""',{
+					    backwards: false,
+					    wrap: true
+				});
+				editor.insert('plist="' + id_string + '"');	
+
 				break;
 		}
+	}
+
+	function countTabs(string) { 
+		editor.find(string,{
+			    backwards: false,
+			    wrap: true
+		});
+		editor.find(' ',{
+			    backwards: true,
+			    wrap: true
+		});
+		var pos = editor.selection.getCursor();
+		var tabSize = editor.getSession().getTabSize();		
+		var tabs = pos.column/tabSize;
+		return tabs;
 	}
 
 	function undoAce() {
@@ -387,7 +467,7 @@ context-menus:
         <ul class="dropdown-menu" role="menu">
             <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Add Critical Music Note</a></li>
             <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Add Critical Music Note (measure)</a></li>            
-            <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'music'); return false;">Add Critical Lyric Note</a></li>
+            <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;">Add Critical Lyric Note</a></li>
         </ul>
     </div>
     <div class="btn-group" role="group">
