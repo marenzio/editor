@@ -1,0 +1,17 @@
+<app>
+    <lem>
+    </lem>
+    <rdg label="original">
+        <scoreDef meter.sym="common">
+            <staffGrp>
+                <staffGrp n="1" symbol="bracket">
+                    <staffDef clef.line="1" clef.shape="C" n="1"/>
+                    <staffDef clef.line="1" clef.shape="C" n="2"/>
+                    <staffDef clef.line="3" clef.shape="C" n="3"/>
+                    <staffDef clef.line="4" clef.shape="C" n="4"/>
+                    <staffDef clef.line="3" clef.shape="F" n="5"/>
+                </staffGrp>
+            </staffGrp>
+        </scoreDef>
+    </rdg>
+</app>
