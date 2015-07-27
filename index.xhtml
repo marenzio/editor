@@ -60,9 +60,13 @@ context-menus:
 		set_options();
 		vrvToolkit.loadData(data);
 
-		var mei = vrvToolkit.getMEI(0, 1 );
-		editor.setValue(mei);
-		editor.moveCursorTo(new Number(0), new Number(0));
+		// replace these lines with updateAce?  They are the same.
+//		var mei = vrvToolkit.getMEI(0, 1 );
+//		editor.setValue(mei);
+//		editor.moveCursorTo(new Number(0), new Number(0));
+		updateAce();
+
+		// should these lines be included in updateAce instead?
 		UndoManager = require("ace/undomanager").UndoManager;
 		editor.getSession().setUndoManager(new UndoManager());
 
@@ -370,7 +374,12 @@ context-menus:
 		    }
     	}
     	drag_id.length = 0;
-    }    
+    }
+
+    function transposeOctave() {
+		//var voice = prompt("Please enter the voice to transpose");
+        console.log("one");
+    }
 
 	function resizeAce() {
 	 	$('#editor').height($(window).height() - $("#navbar").height() - 4);
@@ -460,7 +469,7 @@ context-menus:
             <li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
             <li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="transposeOctave(); return false">Transpose octave</a></li>
+            <li><a href="#" onclick="transposeOctave(); return false">Transpose octave</a></li>
             <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
             <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 	
         </ul>
@@ -547,6 +556,10 @@ context-menus:
 				clearHighlights();
 			}
 		});
+
+       	var onSaxonLoad = function() {    
+	    	console.log("here");
+    	};		
         
         $(window).resize(function(){
             apply_zoom();
@@ -638,5 +651,7 @@ context-menus:
 			load_data( data );
 		}, 'text');
 	});
+
+
 //]]>
 </script>
