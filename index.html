@@ -40,6 +40,7 @@ context-menus:
     var file;
     var fileName;
 	var app_xpath = "";
+
     
     function set_options( ) {
         pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
@@ -405,19 +406,20 @@ context-menus:
 
     function transposeOctave() {
 		var voice = prompt("Please enter the voice to transpose");
+		if (voice == null) return;
+
         var xsl = Saxon.requestXML("xslt/transposeOctave.xsl");
 		var xml = Saxon.parseXML(editor.getValue());
-        console.log(xml);
         var proc = Saxon.newXSLT20Processor(xsl);
         proc.setParameter(null, "voice", voice);
-        load_data( Saxon.serializeXML( proc.transformToDocument(  xml ) ) );
+        load_data( Saxon.serializeXML(proc.transformToDocument(xml)));
     }
 
 	function resizeAce() {
 	 	$('#editor').height($(window).height() - $("#navbar").height() - 4);
 	 	$('#editor').width($("#xml_panel").width());
 	};
-        
+    
     function editSet( attr, value ) {
         if (drag_id.length == 0) {
             return;

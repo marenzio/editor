@@ -3,9 +3,9 @@
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p>
-                <xd:b>Created on:</xd:b> May 14, 2015</xd:p>
+                <xd:b>Created on:</xd:b> July 28, 2015</xd:p>
             <xd:p>
-                <xd:b>Author:</xd:b> Laurent Pugin</xd:p>
+                <xd:b>Author:</xd:b> Michael McMillan</xd:p>
             <xd:p/>
         </xd:desc>
     </xd:doc>
