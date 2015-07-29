@@ -64,15 +64,7 @@ context-menus:
 		set_options();
 		vrvToolkit.loadData(data);
 
-		// replace these lines with updateAce?  They are the same.
-//		var mei = vrvToolkit.getMEI(0, 1 );
-//		editor.setValue(mei);
-//		editor.moveCursorTo(new Number(0), new Number(0));
 		updateAce();
-
-		// should these lines be included in updateAce instead?
-		UndoManager = require("ace/undomanager").UndoManager;
-		editor.getSession().setUndoManager(new UndoManager());
 
 		page = 1;
 		load_page();
@@ -112,8 +104,6 @@ context-menus:
 		}, 'text');
 	}
 
-	// note: move tab-finding code to independent function
-	// Also, see if you can 
 	function addCriticalNote(id_cache, annot, type) {
 		switch (type) {
 			case "music":
@@ -600,8 +590,6 @@ context-menus:
 			}
 		});
 
-
-        
         $(window).resize(function(){
             apply_zoom();
         });
@@ -610,6 +598,8 @@ context-menus:
    	    editor.getSession().setMode("ace/mode/xml");
    	    editor.$blockScrolling = Infinity;  // included to disable warning message
 		resizeAce();
+		UndoManager = require("ace/undomanager").UndoManager;
+		editor.getSession().setUndoManager(new UndoManager());
 
 		document.getElementById('fileinput').addEventListener('change', openFile, false);
 
