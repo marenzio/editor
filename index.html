@@ -243,6 +243,15 @@ context-menus:
 		editor.insert("\n");
 		editor.insert(xml);
 
+		editor.removeLines();
+
+		for (var i = 0; i < 16; i++) {
+			editor.navigateUp(1);
+			editor.navigateLineStart()
+			for (var j = 0; j < tabs; j++) {
+				editor.indent();
+			}
+		}
 	}
 
 	function undoAce() {
