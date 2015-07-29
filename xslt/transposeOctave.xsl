@@ -21,7 +21,7 @@
 
     <xsl:template match="mei:staff[@n=$voice]//mei:note/@oct">
         <xsl:attribute name="oct">
-            <xsl:value-of select="number(.) + 1"/>
+            <xsl:value-of select="number(.) - 1"/>
         </xsl:attribute>
     </xsl:template>
 
