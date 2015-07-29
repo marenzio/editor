@@ -64,10 +64,13 @@ context-menus:
 		set_options();
 		vrvToolkit.loadData(data);
 
-		updateAce();
-
 		page = 1;
 		load_page();
+
+		updateAce();
+		resizeAce();
+
+		addConsoleText("New Data Loaded.");
 	}
 
 	function updateAce() {
@@ -230,7 +233,6 @@ context-menus:
 
 	}
 
-	// function in progress
 	function incipitClefs(xml) {
 		editor.moveCursorTo(new Number(0), new Number(0));
 		editor.find("</scoreDef>", {
@@ -414,9 +416,17 @@ context-menus:
         load_data( Saxon.serializeXML(proc.transformToDocument(xml)));
     }
 
+    function switchSource() {
+		var source = prompt("Please enter the original source.");
+		if (source == null) return;
+
+		app_xpath = "./rdg[contains(@source, '" + source + "')]";
+ 		updateVerovio();
+    }
+
 	function resizeAce() {
-	 	$('#editor').height($(window).height() - $("#navbar").height() - 4);
-	 	$('#editor').width($("#xml_panel").width());
+	 	$('#editor').height($(document).height() - $( "#navbar" ).height() - 4);
+	 	$('#editor').width($("#xml_panel").width() - 5);
 	};
     
     function editSet( attr, value ) {
@@ -466,6 +476,10 @@ context-menus:
 	    }
 	}
 
+	function addConsoleText(text) {
+		$('#consoleText').append('<br>' + text);
+	}
+
 //]]>
 </script>
 
@@ -504,7 +518,8 @@ context-menus:
             <li role="separator" class="divider"></li>
             <li><a href="#" onclick="transposeOctave(); return false">Transpose octave</a></li>
             <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
-            <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 	
+            <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 
+			<li><a href="#" onclick="switchSource(); return false;">Switch Source</a></li>
         </ul>
     </div>
         <div class="btn-group">
@@ -556,11 +571,11 @@ context-menus:
 	<div id="xml_panel" >
 		<div id="editor"></div>
 	</div>
-	<div id="svg_panel" style="background-color: #fff;">
-		<div id="svg_output" />
+	<div id="svg_panel" style="background-color: #fff">
+		<div id="svg_output"> </div>
+    	<div id="consoleText" >Console loaded!</div>
 	</div>
 </div>
-
 
 <div id="context-menu">
     <ul class="dropdown-menu" role="menu">
@@ -599,14 +614,11 @@ context-menus:
 			}
 		});
 
-        $(window).resize(function(){
-            apply_zoom();
-        });
+
         
 	    editor = ace.edit("editor");
    	    editor.getSession().setMode("ace/mode/xml");
    	    editor.$blockScrolling = Infinity;  // included to disable warning message
-		resizeAce();
 		UndoManager = require("ace/undomanager").UndoManager;
 		editor.getSession().setUndoManager(new UndoManager());
 
@@ -660,7 +672,10 @@ context-menus:
 	        }
         })
 
-		$(window).resize(resizeAce);
+		$(window).resize(function() {
+			apply_zoom();
+			resizeAce();
+		});
 
 		$('input[type=radio][name=clefs]').change(function() {
 			if (this.value == 'clefs_modernized') {
