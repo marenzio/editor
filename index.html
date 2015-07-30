@@ -63,7 +63,6 @@ context-menus:
 	function load_data(data) {
 		set_options();
 		vrvToolkit.loadData(data);
-
 		page = 1;
 		load_page();
 
@@ -71,6 +70,8 @@ context-menus:
 		resizeAce();
 
 		addConsoleText("New Data Loaded.");
+		var log = vrvToolkit.getLog();
+		if (log != "") addConsoleText(log);
 	}
 
 	function updateAce() {
@@ -85,6 +86,10 @@ context-menus:
 		vrvToolkit.loadData(data);
 		load_page();
 		drag_id.length = 0;
+
+		addConsoleText("Verovio reloaded.");
+		var log = vrvToolkit.getLog();
+		if (log != "") addConsoleText(log);
 	}
 
 	function fetchAnnot(fileName, id_cache, type) {
@@ -425,15 +430,28 @@ context-menus:
     }
 
 	function resizeAce() {
-	 	$('#editor').height($(document).height() - $( "#navbar" ).height() - 4);
 	 	$('#editor').width($("#xml_panel").width() - 5);
+	 	$('#editor').height($(window).height() - $( "#navbar" ).height() - 4);
 	};
-    
-    function editSet( attr, value ) {
+
+	// are there other attributes to change?  This function
+	// can be made more general.
+	function italicizeLyrics() {
+		for (var i = 0; i < drag_id.length; i++) {
+			var verse_id = drag_id[i];
+			var syl_id = $("#" + verse_id).find(".syl").attr("id");
+			editSet( 'fontstyle', 'italic', syl_id);
+	        var res = vrvToolkit.edit( editorAction );
+		}
+		reload_page( drag_id[0] );
+		updateAce();
+	}    
+
+    function editSet( attr, value, id ) {
         if (drag_id.length == 0) {
             return;
         }
-		editorAction = JSON.stringify({ action: 'set', param: { elementId: drag_id[0],
+		editorAction = JSON.stringify({ action: 'set', param: { elementId: id,
             attrType: attr, attrValue: value }   
 	    });
         var res = vrvToolkit.edit( editorAction );
@@ -520,6 +538,7 @@ context-menus:
             <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
             <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 
 			<li><a href="#" onclick="switchSource(); return false;">Switch Source</a></li>
+			<li><a href="#" onclick="italicizeLyrics(); return false;">Italicize Lyrics</a></li>			
         </ul>
     </div>
         <div class="btn-group">
@@ -573,7 +592,7 @@ context-menus:
 	</div>
 	<div id="svg_panel" style="background-color: #fff">
 		<div id="svg_output"> </div>
-    	<div id="consoleText" >Console loaded!</div>
+    	<div id="consoleText" >Console loaded.</div>
 	</div>
 </div>
 
