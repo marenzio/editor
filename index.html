@@ -40,6 +40,7 @@ context-menus:
     var file;
     var fileName;
 	var app_xpath = "";
+	var consoleText = "Console loaded.";
 
     
     function set_options( ) {
@@ -495,7 +496,11 @@ context-menus:
 	}
 
 	function addConsoleText(text) {
-		$('#consoleText').append('<br>' + text);
+		consoleText = consoleText + "\n" + text;
+	}
+
+	function displayLog() {
+		  window.alert(consoleText);
 	}
 
 //]]>
@@ -522,6 +527,7 @@ context-menus:
 			<li><a href="#" onclick="$('#fileinput').trigger('click'); return false;">Open</a>
 				<input id="fileinput" type="file" style="display: none;" /></li>
             <li><a href="#" onclick="saveFile(); return false;">Save</a></li>
+            <li><a href="#" onclick="displayLog(); return false;">Show Log</a></li>
         </ul>
     </div>           
     <div class="btn-group">
@@ -592,7 +598,6 @@ context-menus:
 	</div>
 	<div id="svg_panel" style="background-color: #fff">
 		<div id="svg_output"> </div>
-    	<div id="consoleText" >Console loaded.</div>
 	</div>
 </div>
 
