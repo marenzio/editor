@@ -24,28 +24,28 @@ context-menus:
 
 <script type="text/javascript">
 //<![CDATA[
-    
+	
 	var vrvToolkit = new verovio.toolkit();
 	var page = 1;
 	var zoom = 50;
 	var pageHeight = 2970;
 	var pageWidth = 2100;
-    var show_xml = false;
-    var font = 'Leipzig';
-    var drag_id = new Array();
-    var drag_start;
-    var dragging;
-    var last_note = ["", 0]
-    var editor;
-    var file;
-    var fileName;
+	var show_xml = false;
+	var font = 'Leipzig';
+	var drag_id = new Array();
+	var drag_start;
+	var dragging;
+	var last_note = ["", 0]
+	var editor;
+	var file;
+	var fileName;
 	var app_xpath = "";
 	var consoleText = "Console loaded.";
 
-    
-    function set_options( ) {
-        pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
-        pageWidth = ($('#svg_panel').width()) * 100 / zoom ;
+	
+	function set_options( ) {
+		pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
+		pageWidth = ($('#svg_panel').width()) * 100 / zoom ;
 		border = 50;
 		options = JSON.stringify({
 					inputFormat: 'mei',
@@ -53,13 +53,13 @@ context-menus:
 					pageWidth: pageWidth,
 					border: border,
 					scale: zoom,
-                    adjustPageHeight: 1,
+					adjustPageHeight: 1,
 					ignoreLayout: 1,
-                    font: font,
-                    rdgXPathQuery: app_xpath,                    
+					font: font,
+					appXPathQuery: app_xpath,
 				});
 		vrvToolkit.setOptions( options );
-    }
+	}
 	
 	function load_data(data) {
 		set_options();
@@ -78,7 +78,7 @@ context-menus:
 	function updateAce() {
 		var mei = vrvToolkit.getMEI(0, 1 );
 		editor.setValue(mei);
-		editor.moveCursorTo(new Number(0), new Number(0));		
+		editor.moveCursorTo(new Number(0), new Number(0));
 	}
 
 	function updateVerovio() {
@@ -101,7 +101,7 @@ context-menus:
 				type = "lyricParent";
 			}
 		}
-		// in case we want a critical note for the measure.  The code is otherwise the same.
+		// in case we want a critical note for the measure. The code is otherwise the same.
 		else if (type == "musicMeasure") {
 			measureId = $(document.getElementById(id_cache[0])).closest(".measure").attr("id");
 			id_cache = [measureId];
@@ -128,8 +128,8 @@ context-menus:
 				editor.insert(annot);
 				editor.removeLines();
 				editor.find('plist=""',{
-					    backwards: true,
-					    wrap: true
+						backwards: true,
+						wrap: true
 				});
 				editor.insert('plist="' + id_cache[0] + '"');
 				break;
@@ -138,9 +138,9 @@ context-menus:
 				// create string with all ids separated by spaces
 				var id_string = "";
 				for (var i = id_cache.length - 1; i > 0; i--) {
-                        id_string = id_string.concat(id_cache[i] + " ");
-                    }
-                id_string = id_string.concat(id_cache[0]);
+						id_string = id_string.concat(id_cache[i] + " ");
+					}
+				id_string = id_string.concat(id_cache[0]);
 
 				editor.find('label="app-text"')
 				var tabs = countTabs("<annot");
@@ -161,8 +161,8 @@ context-menus:
 
 				// replace plist
 				editor.find('plist=""',{
-					    backwards: false,
-					    wrap: true
+						backwards: false,
+						wrap: true
 				});
 				editor.insert('plist="' + id_string + '"');	
 				break;
@@ -188,12 +188,12 @@ context-menus:
 				// create string with all ids separated by spaces and replace plist
 				var id_string = "";
 				for (var i = id_cache.length - 1; i > 0; i--) {
-                        id_string = id_string.concat(id_cache[i] + " ");
-                    }
-                id_string = id_string.concat(id_cache[0]);
+						id_string = id_string.concat(id_cache[i] + " ");
+					}
+				id_string = id_string.concat(id_cache[0]);
 				editor.find('plist=""',{
-					    backwards: false,
-					    wrap: true
+						backwards: false,
+						wrap: true
 				});
 				editor.insert('plist="' + id_string + '"');	
 				break;
@@ -217,12 +217,12 @@ context-menus:
 
 	function countTabs(string) { 
 		editor.find(string,{
-			    backwards: false,
-			    wrap: true
+				backwards: false,
+				wrap: true
 		});
 		editor.find(' ',{
-			    backwards: true,
-			    wrap: true
+				backwards: true,
+				wrap: true
 		});
 		var pos = editor.selection.getCursor();
 		var tabSize = editor.getSession().getTabSize();		
@@ -275,20 +275,20 @@ context-menus:
 		$("#svg_output").html(svg);
 	//	adjust_page_height();
 	};
-    
-    function reload_page( id ) {
+	
+	function reload_page( id ) {
 		vrvToolkit.redoLayout();
-	    var elementPage = vrvToolkit.getPageWithElement( id );
-        if (elementPage == 0) {
-            console.log( "ID not found" );
-            return;
-        }
-        if (elementPage != page) {
-            page = elementPage;
-        }
-        load_page();
-    }
-    
+		var elementPage = vrvToolkit.getPageWithElement( id );
+		if (elementPage == 0) {
+			console.log( "ID not found" );
+			return;
+		}
+		if (elementPage != page) {
+			page = elementPage;
+		}
+		load_page();
+	}
+	
 	function next_page() {
 		if (page >= vrvToolkit.getPageCount()) {
 			return;
@@ -352,124 +352,124 @@ context-menus:
 	function adjust_page_height() {
 		// adjust the height of the panel
 		if ( $('#svg_panel svg') ) {
-            zoomed_height = pageHeight * zoom / 100;
-            if ( zoomed_height < $('#svg_panel svg').height() ) {
-                zoomed_height = $('#svg_panel svg').height();
-            }
+			zoomed_height = pageHeight * zoom / 100;
+			if ( zoomed_height < $('#svg_panel svg').height() ) {
+				zoomed_height = $('#svg_panel svg').height();
+			}
 			$('#svg_output').height( zoomed_height ); // slightly more for making sure we have no scroll bar	
 		}
 	}
-    
-    function highlight_id( id_string ) {
+	
+	function highlight_id( id_string ) {
 		$(id_string).css({
-            "fill": "#ff0000",
-            "stroke": "#ff0000",
-            "fill-opacity": "1.0",
-            "stroke-opacity": "1.0"
-        });      
-    	return;
-    }
+			"fill": "#ff0000",
+			"stroke": "#ff0000",
+			"fill-opacity": "1.0",
+			"stroke-opacity": "1.0"
+		});	
+		return;
+	}
 
-    function removeHighlight( id_string ) {
+	function removeHighlight( id_string ) {
 		$(id_string).css({
 			"fill": "#000000",
-            "stroke": "#000000",
-            "fill-opacity": "1.0",
-            "stroke-opacity": "1.0"
-        });      
-    	return;
-    }
+			"stroke": "#000000",
+			"fill-opacity": "1.0",
+			"stroke-opacity": "1.0"
+		});	
+		return;
+	}
 
-    function reapplyHighlights() {
-    	for(var i = 0; i < drag_id.length; i++) {
-    		var id = drag_id[i];
-		    var type = $(document.getElementById(id)).attr("class");
-		    switch (type) {
-		    	case "note":
+	function reapplyHighlights() {
+		for(var i = 0; i < drag_id.length; i++) {
+			var id = drag_id[i];
+			var type = $(document.getElementById(id)).attr("class");
+			switch (type) {
+				case "note":
 					highlight_id("#" + id + " > rect, #" + id + " > use");
-		    		break;
+					break;
 				default:
 					highlight_id("#" + id);
-		    		break;
-		    }
-    	}
-    }
+					break;
+			}
+		}
+	}
 
-    function clearHighlights() {
-    	for(var i = 0; i < drag_id.length; i++) {
-    		var id = drag_id[i];
-		    var type = $(document.getElementById(id)).attr("class");
-		    switch (type) {
-		    	case "note":
+	function clearHighlights() {
+		for(var i = 0; i < drag_id.length; i++) {
+			var id = drag_id[i];
+			var type = $(document.getElementById(id)).attr("class");
+			switch (type) {
+				case "note":
 					removeHighlight("#" + id + " > rect, #" + id + " > use");
-		    		break;
+					break;
 				default:
 					removeHighlight("#" + id);
-		    		break;
-		    }
-    	}
-    	drag_id.length = 0;
-    }
+					break;
+			}
+		}
+		drag_id.length = 0;
+	}
 
-    function transposeOctave() {
+	function transposeOctave() {
 		var voice = prompt("Please enter the voice to transpose");
 		if (voice == null) return;
 
-        var xsl = Saxon.requestXML("xslt/transposeOctave.xsl");
+		var xsl = Saxon.requestXML("xslt/transposeOctave.xsl");
 		var xml = Saxon.parseXML(editor.getValue());
-        var proc = Saxon.newXSLT20Processor(xsl);
-        proc.setParameter(null, "voice", voice);
-        load_data( Saxon.serializeXML(proc.transformToDocument(xml)));
-    }
+		var proc = Saxon.newXSLT20Processor(xsl);
+		proc.setParameter(null, "voice", voice);
+		load_data( Saxon.serializeXML(proc.transformToDocument(xml)));
+	}
 
-    function switchSource() {
+	function switchSource() {
 		var source = prompt("Please enter the original source.");
 		if (source == null) return;
 
 		app_xpath = "./rdg[contains(@source, '" + source + "')]";
  		updateVerovio();
-    }
+	}
 
 	function resizeAce() {
 	 	$('#editor').width($("#xml_panel").width() - 5);
 	 	$('#editor').height($("#paren_panel").height());
 	};
 
-	// are there other attributes to change?  This function
+	// are there other attributes to change? This function
 	// can be made more general.
 	function italicizeLyrics() {
 		for (var i = 0; i < drag_id.length; i++) {
 			var verse_id = drag_id[i];
 			var syl_id = $("#" + verse_id).find(".syl").attr("id");
 			editSet( 'fontstyle', 'italic', syl_id);
-	        var res = vrvToolkit.edit( editorAction );
+			var res = vrvToolkit.edit( editorAction );
 		}
 		reload_page( drag_id[0] );
 		updateAce();
-	}    
+	}	
 
-    function editSet( attr, value, id ) {
-        if (drag_id.length == 0) {
-            return;
-        }
+	function editSet( attr, value, id ) {
+		if (drag_id.length == 0) {
+			return;
+		}
 		editorAction = JSON.stringify({ action: 'set', param: { elementId: id,
-            attrType: attr, attrValue: value }   
-	    });
-        var res = vrvToolkit.edit( editorAction );
-        reload_page( drag_id[0] );  
-    };
+			attrType: attr, attrValue: value }
+		});
+		var res = vrvToolkit.edit( editorAction );
+		reload_page( drag_id[0] );
+	};
 
-    function editInsert( elementType ) {
-        if ((drag_id.length < 2) || (drag_id[0] == drag_id[1]) ) {
-            console.log("Select two (different) notes!")
-            return;
-        }
+	function editInsert( elementType ) {
+		if ((drag_id.length < 2) || (drag_id[0] == drag_id[1]) ) {
+			console.log("Select two (different) notes!")
+			return;
+		}
 		editorAction = JSON.stringify({ action: 'insert', param: { elementType: elementType,
-            startid: drag_id[1], endid: drag_id[0] }   
-	    });
-        var res = vrvToolkit.edit( editorAction );
-        reload_page( drag_id[0] );  
-    };
+			startid: drag_id[1], endid: drag_id[0] }
+		});
+		var res = vrvToolkit.edit( editorAction );
+		reload_page( drag_id[0] );
+	};
 
 	function saveFile() {
 		if (fileName != null ) {
@@ -480,19 +480,19 @@ context-menus:
 	}
 
 	function openFile(evt) {
-    	var f = evt.target.files[0]; 
+		var f = evt.target.files[0]; 
 
-	    if (f) {
-      		var r = new FileReader();
-      		r.onload = function(e) {
-      			fileName = f.name;
-	      		var contents = e.target.result;
-	      		load_data(contents);
-      	    }
-      	    r.readAsText(f);
-	    } else { 
-      	    alert("Failed to load file");
-	    }
+		if (f) {
+			var r = new FileReader();
+			r.onload = function(e) {
+				fileName = f.name;
+				var contents = e.target.result;
+				load_data(contents);
+			}
+			r.readAsText(f);
+		} else { 
+			alert("Failed to load file");
+		}
 	}
 
 	function addConsoleText(text) {
@@ -500,7 +500,7 @@ context-menus:
 	}
 
 	function displayLog() {
-		  window.alert(consoleText);
+		window.alert(consoleText);
 	}
 
 //]]>
@@ -509,67 +509,67 @@ context-menus:
  
 <!-- top navbar -->
 <div id="navbar" class="navbar navbar-default">
-    <button type="button" class="navbar-toggle" data-toggle="offcanvas">
-         <span class="icon-bar"></span>
-         <span class="icon-bar"></span>
-         <span class="icon-bar"></span> 
-    </button>
-    <a class="navbar-brand logo-nav" href="{{ site.baseurl }}/index.html">
-        <img src="{{ site.baseurl }}/images/verovio-fadded-50.png" />
-    </a>
-    <div class="btn-group">
-        <button type="button" class="btn btn-default btn-sm">File</button>
-        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
+	<button type="button" class="navbar-toggle" data-toggle="offcanvas">
+		 <span class="icon-bar"></span>
+		 <span class="icon-bar"></span>
+		 <span class="icon-bar"></span> 
+	</button>
+	<a class="navbar-brand logo-nav" href="{{ site.baseurl }}/index.html">
+		<img src="{{ site.baseurl }}/images/verovio-fadded-50.png" />
+	</a>
+	<div class="btn-group">
+		<button type="button" class="btn btn-default btn-sm">File</button>
+		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			<span class="caret"></span>
+			<span class="sr-only">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
 			<li><a href="#" onclick="$('#fileinput').trigger('click'); return false;">Open</a>
 				<input id="fileinput" type="file" style="display: none;" /></li>
-            <li><a href="#" onclick="saveFile(); return false;">Save</a></li>
-            <li><a href="#" onclick="displayLog(); return false;">Show Log</a></li>
-        </ul>
-    </div>           
-    <div class="btn-group">
-        <button type="button" class="btn btn-default btn-sm">Edit</button>
-        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
-            <li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#" onclick="transposeOctave(); return false">Transpose octave</a></li>
-            <li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
-            <li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 
+			<li><a href="#" onclick="saveFile(); return false;">Save</a></li>
+			<li><a href="#" onclick="displayLog(); return false;">Show Log</a></li>
+		</ul>
+	</div>		
+	<div class="btn-group">
+		<button type="button" class="btn btn-default btn-sm">Edit</button>
+		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			<span class="caret"></span>
+			<span class="sr-only">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
+			<li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
+			<li role="separator" class="divider"></li>
+			<li><a href="#" onclick="transposeOctave(); return false">Transpose octave</a></li>
+			<li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
+			<li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 
 			<li><a href="#" onclick="switchSource(); return false;">Switch Source</a></li>
 			<li><a href="#" onclick="italicizeLyrics(); return false;">Italicize Lyrics</a></li>			
-        </ul>
-    </div>
-        <div class="btn-group">
-        <button type="button" class="btn btn-default btn-sm">Insert</button>
-        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Critical Music Note</a></li>
-            <li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Critical Music Note (measure)</a></li> 
-            <li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;">Critical Lyric Note</a></li>
-            <li><a href="#" onclick="fetchAnnot('text/tempoAnnot.xml', drag_id, 'tempo'); return false;">Tempo Indication</a></li>
+		</ul>
+	</div>
+		<div class="btn-group">
+		<button type="button" class="btn btn-default btn-sm">Insert</button>
+		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			<span class="caret"></span>
+			<span class="sr-only">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Critical Music Note</a></li>
+			<li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Critical Music Note (measure)</a></li> 
+			<li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;">Critical Lyric Note</a></li>
+			<li><a href="#" onclick="fetchAnnot('text/tempoAnnot.xml', drag_id, 'tempo'); return false;">Tempo Indication</a></li>
 			<li><a href="#" onclick="fetchIncipit(); return false;">Incipit Clefs</a></li>
-        </ul>
-    </div>
-    <div class="btn-group" role="group">
+		</ul>
+	</div>
+	<div class="btn-group" role="group">
 			<button onclick="zoom_out()" class="btn btn-sm btn-default" type="button">
 				<span class="glyphicon glyphicon-zoom-out"/>
 			</button>
-			<button onclick="zoom_in()" class="btn btn-sm  btn-default" type="button">
+			<button onclick="zoom_in()" class="btn btn-sm btn-default" type="button">
 				<span class="glyphicon glyphicon-zoom-in"/>
 			</button>
 	</div>
-    <div class="btn-group" role="group">
+	<div class="btn-group" role="group">
 		<button onclick="first_page()" class="btn btn-sm btn-default" type="button">
 			<span class="glyphicon glyphicon-fast-backward"/>
 		</button>
@@ -602,14 +602,14 @@ context-menus:
 </div>
 
 <div id="context-menu">
-    <ul class="dropdown-menu" role="menu">
-	    {% for d in page.context-menus %}
-        {% if d.divider  %}<li class="divider"></li>
-        {% else %}
-	    <li><a class="ct-menu-{{ d.class }}" tabindex="-1" href="#" onclick="{{ d.action}}; return false;">{% if d.icon %}<span class="glyphicon {{ d.icon }}"/>  {% endif %}{{ d.name }}</a></li>
-        {% endif %}
-	    {% endfor %}
-    </ul>
+	<ul class="dropdown-menu" role="menu">
+		{% for d in page.context-menus %}
+		{% if d.divider %}<li class="divider"></li>
+		{% else %}
+		<li><a class="ct-menu-{{ d.class }}" tabindex="-1" href="#" onclick="{{ d.action}}; return false;">{% if d.icon %}<span class="glyphicon {{ d.icon }}"/>{% endif %}{{ d.name }}</a></li>
+		{% endif %}
+		{% endfor %}
+	</ul>
 </div>
 
 <script type="text/javascript">
@@ -639,62 +639,62 @@ context-menus:
 		});
 
 
-        
-	    editor = ace.edit("editor");
-   	    editor.getSession().setMode("ace/mode/xml");
-   	    editor.$blockScrolling = Infinity;  // included to disable warning message
+		
+		editor = ace.edit("editor");
+		editor.getSession().setMode("ace/mode/xml");
+		editor.$blockScrolling = Infinity; // included to disable warning message
 		UndoManager = require("ace/undomanager").UndoManager;
 		editor.getSession().setUndoManager(new UndoManager());
 
 		document.getElementById('fileinput').addEventListener('change', openFile, false);
 
 		// Combine click functions for note and rest?
-        $('#svg_output').on('click', ".note", function(e) {
-            var t = e.target;
-            // if we clicked a note:
-            if (t.parentNode.getAttribute("class") == "note") {
-		        var id = t.parentNode.attributes.id.value;
+		$('#svg_output').on('click', ".note", function(e) {
+			var t = e.target;
+			// if we clicked a note:
+			if (t.parentNode.getAttribute("class") == "note") {
+				var id = t.parentNode.attributes.id.value;
 
-		        if (drag_id.indexOf(id) == -1) { // make sure we don't add it twice
-		            drag_id.unshift(id);
+				if (drag_id.indexOf(id) == -1) { // make sure we don't add it twice
+					drag_id.unshift(id);
 					highlight_id("#" + id + " > rect, #" + id + " > use");
-	    	    }
-	        	else {
-        	    	drag_id.splice( drag_id.indexOf(id), 1);
+				}
+				else {
+					drag_id.splice( drag_id.indexOf(id), 1);
 					removeHighlight("#" + id + " > rect, #" + id + " > use");
-		        }
+				}
 
-		        editor.find('xml:id="' + id + '"');
-    	    }
-    	    // else if we clicked a lyric
-            else if (t.parentNode.tagName == "text") {
-                var verse_id = t.closest(".verse").attributes.id.value
+				editor.find('xml:id="' + id + '"');
+			}
+			// else if we clicked a lyric
+			else if (t.parentNode.tagName == "text") {
+				var verse_id = t.closest(".verse").attributes.id.value
 
-                if (drag_id.indexOf(verse_id) == -1) {
-                	drag_id.unshift(verse_id);
+				if (drag_id.indexOf(verse_id) == -1) {
+					drag_id.unshift(verse_id);
 						highlight_id("#" + verse_id);
-                }
-                else {
+				}
+				else {
 					drag_id.splice( drag_id.indexOf(verse_id), 1);
 					removeHighlight("#" + verse_id);
-                }
-   		        editor.find('xml:id="' + verse_id + '"');
-            }
-        })
+				}
+				editor.find('xml:id="' + verse_id + '"');
+			}
+		})
 
-        $('#svg_output').on('click', ".mRest, .rest", function(e) {
-            var t = e.target;
-	        var id = t.parentNode.attributes.id.value;
-	        //console.log(t.parentNode.getAttribute("class"));
-	        if (drag_id.indexOf(id) == -1) {
-	        	drag_id.unshift(id);
-		        highlight_id("#" + id);
-	        }
-	        else {
+		$('#svg_output').on('click', ".mRest, .rest", function(e) {
+			var t = e.target;
+			var id = t.parentNode.attributes.id.value;
+			//console.log(t.parentNode.getAttribute("class"));
+			if (drag_id.indexOf(id) == -1) {
+				drag_id.unshift(id);
+				highlight_id("#" + id);
+			}
+			else {
 				drag_id.splice( drag_id.indexOf(id), 1);
 				removeHighlight("#" + id);
-	        }
-        })
+			}
+		})
 
 		$(window).resize(function() {
 			apply_zoom();
@@ -712,30 +712,30 @@ context-menus:
 			}
 		});
 
-        $('#svg_output').contextmenu( {
-            before: function (e, element, target) {
-                e.preventDefault();
-                if (drag_id.length == 0) {
-                    e.preventDefault();
-                    this.closemenu();
-                    return false;
-                }
-                return true;
-            }
-          });
-        
-       	// Adjust the size of the svg_output and the zoom according to the div (screen) siz
-       	width = $('#svg_panel').width();
+		$('#svg_output').contextmenu( {
+			before: function (e, element, target) {
+				e.preventDefault();
+				if (drag_id.length == 0) {
+					e.preventDefault();
+					this.closemenu();
+					return false;
+				}
+				return true;
+			}
+		});
+		
+		// Adjust the size of the svg_output and the zoom according to the div (screen) siz
+		width = $('#svg_panel').width();
 		zoom = Math.min( Math.floor( 100 * width / 2100 ), 40 );
 	
 		// Load the default file or the file passed in the URL
-	 	file = location.search.substring(1);
-	 	fileName = file.replace(/^.*[\\\/]/, '');
+		file = location.search.substring(1);
+		fileName = file.replace(/^.*[\\\/]/, '');
 
 		if (file.length == 0) {
-            file = "examples/downloads/M-04-6-02.mei";
-            fileName = "M-04-6-02.mei";
-        }
+			file = "examples/downloads/M-04-6-02.mei";
+			fileName = "M-04-6-02.mei";
+		}
 		$( "#toggle_options" ).click();
 		$.get( file , function( data ) {
 			load_data( data );
