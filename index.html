@@ -539,10 +539,8 @@ context-menus:
 		<ul class="dropdown-menu" role="menu">
 			<li><a href="#" onclick="undoAce(); return false;">Undo</a></li>
 			<li><a href="#" onclick="redoAce(); return false;">Redo</a></li>
-			<li role="separator" class="divider"></li>
+			<li role="separator" class="divider"></li> 
 			<li><a href="#" onclick="transposeOctave(); return false">Transpose octave</a></li>
-			<li><a href="#" onclick="updateAce(); return false;">Update Ace</a></li>
-			<li><a href="#" onclick="updateVerovio(); return false;">Update Verovio</a></li> 
 			<li><a href="#" onclick="switchSource(); return false;">Switch Source</a></li>
 			<li><a href="#" onclick="italicizeLyrics(); return false;">Italicize Lyrics</a></li>			
 		</ul>
@@ -582,6 +580,14 @@ context-menus:
 		<button onclick="last_page()" class="btn btn-sm btn-default" type="button">
 			<span class="glyphicon glyphicon-fast-forward"/>
 		</button>
+	</div>
+	<div class="btn-group" role="group">
+			<button onclick="updateAce(); return false;" class="btn btn-sm btn-default" type="button">
+				<span class="glyphicon glyphicon-circle-arrow-left"/>
+			</button>
+			<button onclick="updateVerovio(); return false;" class="btn btn-sm btn-default" type="button">
+				<span class="glyphicon glyphicon-circle-arrow-right"/>
+			</button>
 	</div>
 	<div class="btn-group" data-toggle="buttons">
 		<label class="btn btn-default active btn-sm">
