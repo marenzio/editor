@@ -3,6 +3,6 @@
         <list>
             <li>lyric</li>
         </list>
-        <annot plist="">critical_note</annot>
+        <annot plist="">source_list</annot>
     </annot>
 </annot>
