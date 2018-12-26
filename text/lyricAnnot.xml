@@ -1,6 +1,4 @@
-<annot label="">
-    <list>
-        <li>lyric</li>
-    </list>
-    <annot plist="">critical_note</annot>
+<annot corresp="#line" label="">
+    <annot type="lyric">lyric</annot>
+    <annot type="id-list" plist="">source_list</annot>
 </annot>

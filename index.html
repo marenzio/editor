@@ -28,8 +28,8 @@ context-menus:
 	var vrvToolkit = new verovio.toolkit();
 	var page = 1;
 	var zoom = 50;
-	var pageHeight = 2970;
-	var pageWidth = 2100;
+	var pageHeight = 3970;
+	var pageWidth = 2900;
 	var show_xml = false;
 	var font = 'Leipzig';
 	var drag_id = new Array();
@@ -44,20 +44,18 @@ context-menus:
 
 	
 	function set_options( ) {
-		pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
-		pageWidth = ($('#svg_panel').width()) * 100 / zoom ;
+		//pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
+		//pageWidth = ($('#svg_panel').width()) * 100 / zoom ;
 		border = 50;
-		options = JSON.stringify({
-					inputFormat: 'mei',
+		options = {
 					pageHeight: pageHeight,
 					pageWidth: pageWidth,
-					border: border,
 					scale: zoom,
-					adjustPageHeight: 1,
-					ignoreLayout: 1,
+					//adjustPageHeight: true,
 					font: font,
+                    breaks: "encoded",
 					appXPathQuery: app_xpath,
-				});
+				};
 		vrvToolkit.setOptions( options );
 	}
 	
@@ -96,7 +94,7 @@ context-menus:
 	function fetchAnnot(fileName, id_cache, type) {
 		// in case parent of lyric annot does not exist
 		if (type == "lyric") {
-			if (editor.find('label="app-text"') == null) {
+			if (editor.find('type="app-text"') == null) {
 				fileName = "text/lyricParentAnnot.xml";
 				type = "lyricParent";
 			}
@@ -138,19 +136,15 @@ context-menus:
 				// create string with all ids separated by spaces
 				var id_string = "";
 				for (var i = id_cache.length - 1; i > 0; i--) {
-						id_string = id_string.concat(id_cache[i] + " ");
+						id_string = id_string.concat("#" + id_cache[i] + " ");
 					}
-				id_string = id_string.concat(id_cache[0]);
+				id_string = id_string.concat("#" + id_cache[0]);
 
-				editor.find('label="app-text"')
-				var tabs = countTabs("<annot");
-
-				// insert annotation and add indentation
+				editor.find('</annot', { backwards: true })
 				editor.navigateUp(1);
 				editor.navigateLineEnd();
 				editor.insert("\n");
 				editor.insert(annot);
-				editor.removeLines();
 				for (var i = 0; i < 5; i++) {
 					editor.navigateUp(1);
 					editor.navigateLineStart();
@@ -188,15 +182,36 @@ context-menus:
 				// create string with all ids separated by spaces and replace plist
 				var id_string = "";
 				for (var i = id_cache.length - 1; i > 0; i--) {
-						id_string = id_string.concat(id_cache[i] + " ");
+						id_string = id_string.concat("#" + id_cache[i] + " ");
 					}
-				id_string = id_string.concat(id_cache[0]);
+				id_string = id_string.concat("#" + id_cache[0]);
 				editor.find('plist=""',{
 						backwards: false,
 						wrap: true
 				});
 				editor.insert('plist="' + id_string + '"');	
 				break;
+                
+			case "bracketSpan":
+				var startId = id_cache[0];
+                var endId = id_cache[1];
+                console.log(startId, endId, annot);
+				editor.find("xml:id=\"" + startId + "\"");
+				editor.find("</measure>",{
+					backwards: false
+				});
+				editor.navigateUp(1);
+				editor.navigateLineEnd();
+				editor.insert("\n");
+				editor.insert(annot);
+				editor.navigateUp(1);
+                editor.navigateLineEnd();
+				editor.find('startid="" endid=""',{
+						backwards: false,
+						wrap: true
+				});
+				editor.insert('startid="' + startId + '" endid="' + endId + '"');	
+				//editor.removeLines();
 
 			case "tempo":
 				var id = id_cache[0];
@@ -271,21 +286,22 @@ context-menus:
 	}
 
 	function load_page() {
-		svg = vrvToolkit.renderPage(page, "");
+		svg = vrvToolkit.renderToSVG(page, "");
 		$("#svg_output").html(svg);
 	//	adjust_page_height();
 	};
 	
 	function reload_page( id ) {
-		vrvToolkit.redoLayout();
+		//vrvToolkit.redoLayout();
 		var elementPage = vrvToolkit.getPageWithElement( id );
 		if (elementPage == 0) {
 			console.log( "ID not found" );
 			return;
 		}
-		if (elementPage != page) {
-			page = elementPage;
+		if (elementPage == page) {
+            return;
 		}
+        page = elementPage;
 		load_page();
 	}
 	
@@ -321,7 +337,7 @@ context-menus:
 
 	function apply_zoom() {
 		set_options();
-		vrvToolkit.redoLayout();
+		//vrvToolkit.redoLayout();
 
 		if (drag_id.length > 0) {
 			page = vrvToolkit.getPageWithElement(drag_id[0]);
@@ -429,6 +445,15 @@ context-menus:
 		app_xpath = "./rdg[contains(@source, '" + source + "')]";
  		updateVerovio();
 	}
+    
+    function verovioOnChange() {
+        var line = editor.getSession().getLine(editor.session.selection.getCursor().row);
+        var id = line.match(/.*xml:id=\"([^"]*)\".*/);
+        if (id) {
+            reload_page(id[1]);
+            highlight_id("#" + id[1]);
+        }
+    }
 
 	function resizeAce() {
 	 	$('#editor').width($("#xml_panel").width() - 5);
@@ -442,9 +467,8 @@ context-menus:
 			var verse_id = drag_id[i];
 			var syl_id = $("#" + verse_id).find(".syl").attr("id");
 			editSet( 'fontstyle', 'italic', syl_id);
-			var res = vrvToolkit.edit( editorAction );
 		}
-		reload_page( drag_id[0] );
+		load_page();
 		updateAce();
 	}	
 
@@ -452,11 +476,10 @@ context-menus:
 		if (drag_id.length == 0) {
 			return;
 		}
-		editorAction = JSON.stringify({ action: 'set', param: { elementId: id,
+		editorAction = { action: 'set', param: { elementId: id,
 			attrType: attr, attrValue: value }
-		});
+		};
 		var res = vrvToolkit.edit( editorAction );
-		reload_page( drag_id[0] );
 	};
 
 	function editInsert( elementType ) {
@@ -464,9 +487,9 @@ context-menus:
 			console.log("Select two (different) notes!")
 			return;
 		}
-		editorAction = JSON.stringify({ action: 'insert', param: { elementType: elementType,
+		editorAction = { action: 'insert', param: { elementType: elementType,
 			startid: drag_id[1], endid: drag_id[0] }
-		});
+		};
 		var res = vrvToolkit.edit( editorAction );
 		reload_page( drag_id[0] );
 	};
@@ -556,6 +579,7 @@ context-menus:
 			<li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Critical Music Note (measure)</a></li> 
 			<li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;">Critical Lyric Note</a></li>
 			<li><a href="#" onclick="fetchAnnot('text/tempoAnnot.xml', drag_id, 'tempo'); return false;">Tempo Indication</a></li>
+			<li><a href="#" onclick="fetchAnnot('text/bracketSpan.xml', drag_id, 'bracketSpan'); return false;">Bracket Span</a></li>
 			<li><a href="#" onclick="fetchIncipit(); return false;">Incipit Clefs</a></li>
 		</ul>
 	</div>
@@ -651,6 +675,9 @@ context-menus:
 		editor.$blockScrolling = Infinity; // included to disable warning message
 		UndoManager = require("ace/undomanager").UndoManager;
 		editor.getSession().setUndoManager(new UndoManager());
+        editor.getSession().selection.on('changeCursor', function() { 
+            verovioOnChange();
+        });
 
 		document.getElementById('fileinput').addEventListener('change', openFile, false);
 
@@ -669,11 +696,14 @@ context-menus:
 					drag_id.splice( drag_id.indexOf(id), 1);
 					removeHighlight("#" + id + " > rect, #" + id + " > use");
 				}
-
 				editor.find('xml:id="' + id + '"');
 			}
-			// else if we clicked a lyric
-			else if (t.parentNode.tagName == "text") {
+		})
+        
+		$('#svg_output').on('click', ".syl", function(e) {
+			var t = e.target;
+			// if we clicked a syl:
+            if (t.parentNode.tagName == "tspan") {
 				var verse_id = t.closest(".verse").attributes.id.value
 
 				if (drag_id.indexOf(verse_id) == -1) {
@@ -683,7 +713,7 @@ context-menus:
 				else {
 					drag_id.splice( drag_id.indexOf(verse_id), 1);
 					removeHighlight("#" + verse_id);
-				}
+                }   
 				editor.find('xml:id="' + verse_id + '"');
 			}
 		})
@@ -739,8 +769,8 @@ context-menus:
 		fileName = file.replace(/^.*[\\\/]/, '');
 
 		if (file.length == 0) {
-			file = "examples/downloads/M-04-6-02.mei";
-			fileName = "M-04-6-02.mei";
+			file = "examples/M-06-5/M_06_5_01_S_io_parto_i_moro_e_pur_partir_conviene.mei";
+			fileName = "M_06_5_01_S_io_parto_i_moro_e_pur_partir_conviene.mei";
 		}
 		$( "#toggle_options" ).click();
 		$.get( file , function( data ) {

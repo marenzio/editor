@@ -1,8 +1,6 @@
-<annot label="app-text">
-    <annot label="">
-        <list>
-            <li>lyric</li>
-        </list>
-        <annot plist="">source_list</annot>
+<annot type="app-text">
+    <annot corresp="#line" label="">
+        <annot type="lyric">lyric</annot>
+        <annot type="id-list" plist="">source_list</annot>
     </annot>
 </annot>
