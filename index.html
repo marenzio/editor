@@ -114,7 +114,7 @@ context-menus:
 	function addCriticalNote(id_cache, annot, type) {
 		switch (type) {
 			case "music":
-				if (id_cache.length != 1) return;
+				if (id_cache.length < 1) return;
 				var id = id_cache[0];
 				editor.find("xml:id=\"" + id + "\"");
 				editor.find("</measure>",{
@@ -125,11 +125,18 @@ context-menus:
 				editor.insert("\n");
 				editor.insert(annot);
 				editor.removeLines();
-				editor.find('plist=""',{
+				editor.find('corresp=""',{
 						backwards: true,
 						wrap: true
 				});
-				editor.insert('plist="' + id_cache[0] + '"');
+                
+				var id_string = "";
+				for (var i = id_cache.length - 1; i > 0; i--) {
+						id_string = id_string.concat("#" + id_cache[i] + " ");
+					}
+				id_string = id_string.concat("#" + id_cache[0]);
+                
+				editor.insert('corresp="' + id_string + '"');
 				break;
 
 			case "lyric":
@@ -154,11 +161,11 @@ context-menus:
 				}
 
 				// replace plist
-				editor.find('plist=""',{
+				editor.find('corresp=""',{
 						backwards: false,
 						wrap: true
 				});
-				editor.insert('plist="' + id_string + '"');	
+				editor.insert('corresp="' + id_string + '"');	
 				break;
 
 			case "lyricParent":
@@ -185,11 +192,11 @@ context-menus:
 						id_string = id_string.concat("#" + id_cache[i] + " ");
 					}
 				id_string = id_string.concat("#" + id_cache[0]);
-				editor.find('plist=""',{
+				editor.find('corresp=""',{
 						backwards: false,
 						wrap: true
 				});
-				editor.insert('plist="' + id_string + '"');	
+				editor.insert('corresp="' + id_string + '"');	
 				break;
                 
 			case "bracketSpan":
@@ -769,8 +776,8 @@ context-menus:
 		fileName = file.replace(/^.*[\\\/]/, '');
 
 		if (file.length == 0) {
-			file = "examples/M-06-5/M_06_5_01_S_io_parto_i_moro_e_pur_partir_conviene.mei";
-			fileName = "M_06_5_01_S_io_parto_i_moro_e_pur_partir_conviene.mei";
+			file = "examples/downloads/M-04-6-02.mei";
+			fileName = "M-04-6-02.mei";
 		}
 		$( "#toggle_options" ).click();
 		$.get( file , function( data ) {

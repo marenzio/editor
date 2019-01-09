@@ -1,1 +1,6 @@
-<annot type="app" source="" plist="">critical_note</annot>
+<annot type="app">
+    <p>critical_note</p>
+    <list corresp="">
+        <li></li>
+    </list>
+</annot>
