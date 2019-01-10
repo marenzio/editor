@@ -40,8 +40,8 @@ context-menus:
 	var file;
 	var fileName;
 	var app_xpath = "";
+    var mdivXPathQuery = "";
 	var consoleText = "Console loaded.";
-
 	
 	function set_options( ) {
 		//pageHeight = ($(document).height() - $( "#navbar" ).height() - 4) * 100 / zoom ;
@@ -55,6 +55,7 @@ context-menus:
 					font: font,
                     breaks: "encoded",
 					appXPathQuery: app_xpath,
+                    mdivXPathQuery: mdivXPathQuery
 				};
 		vrvToolkit.setOptions( options );
 	}
@@ -453,6 +454,19 @@ context-menus:
  		updateVerovio();
 	}
     
+	function switchPart() {
+		var part = prompt("Please enter the part");
+		if (part == null) return;
+
+        if (part != 0) {
+            mdivXPathQuery = "//body/mdiv[" + part + "]";
+        }
+        else {
+            mdivXPathQuery = "";
+        }
+ 		updateVerovio();
+	}
+    
     function verovioOnChange() {
         var line = editor.getSession().getLine(editor.session.selection.getCursor().row);
         var id = line.match(/.*xml:id=\"([^"]*)\".*/);
@@ -572,6 +586,7 @@ context-menus:
 			<li role="separator" class="divider"></li> 
 			<li><a href="#" onclick="transposeOctave(); return false">Transpose octave</a></li>
 			<li><a href="#" onclick="switchSource(); return false;">Switch Source</a></li>
+            <li><a href="#" onclick="switchPart(); return false;">Switch Part</a></li>
 			<li><a href="#" onclick="italicizeLyrics(); return false;">Italicize Lyrics</a></li>			
 		</ul>
 	</div>
