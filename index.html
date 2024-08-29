@@ -148,8 +148,8 @@ context-menus:
 					}
 				id_string = id_string.concat("#" + id_cache[0]);
 
-				editor.find('</annot', { backwards: true })
-				editor.navigateUp(1);
+				editor.find("</section>")
+				editor.navigateUp(2);
 				editor.navigateLineEnd();
 				editor.insert("\n");
 				editor.insert(annot);
@@ -161,6 +161,29 @@ context-menus:
 					}
 				}
 
+				// replace plist
+				editor.find('corresp=""',{
+						backwards: false,
+						wrap: true
+				});
+				editor.insert('corresp="' + id_string + '"');	
+				break;
+
+			case "lyricSource":
+				// create string with all ids separated by spaces
+				var id_string = "";
+				for (var i = id_cache.length - 1; i > 0; i--) {
+						id_string = id_string.concat("#" + id_cache[i] + " ");
+					}
+				id_string = id_string.concat("#" + id_cache[0]);
+
+				editor.find("</section>")
+				editor.find('<li ',{
+						backwards: true
+				});
+				editor.navigateLineEnd();
+				editor.insert("\n");
+				editor.insert(annot);
 				// replace plist
 				editor.find('corresp=""',{
 						backwards: false,
@@ -600,6 +623,7 @@ context-menus:
 			<li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'music'); return false;">Critical Music Note</a></li>
 			<li><a href="#" onclick="fetchAnnot('text/musicAnnot.xml', drag_id, 'musicMeasure'); return false;">Critical Music Note (measure)</a></li> 
 			<li><a href="#" onclick="fetchAnnot('text/lyricAnnot.xml', drag_id, 'lyric'); return false;">Critical Lyric Note</a></li>
+			<li><a href="#" onclick="fetchAnnot('text/lyricLi.xml', drag_id, 'lyricSource'); return false;">Critical Lyric Note (source to last)</a></li>
 			<li><a href="#" onclick="fetchAnnot('text/tempoAnnot.xml', drag_id, 'tempo'); return false;">Tempo Indication</a></li>
 			<li><a href="#" onclick="fetchAnnot('text/bracketSpan.xml', drag_id, 'bracketSpan'); return false;">Bracket Span</a></li>
 			<li><a href="#" onclick="fetchIncipit(); return false;">Incipit Clefs</a></li>
