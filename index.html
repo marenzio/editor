@@ -178,8 +178,8 @@ context-menus:
 				id_string = id_string.concat("#" + id_cache[0]);
 
 				editor.find("</section>")
-				editor.find('<li ',{
-						backwards: true
+				editor.find('</li>',{
+					backwards: true
 				});
 				editor.navigateLineEnd();
 				editor.insert("\n");
